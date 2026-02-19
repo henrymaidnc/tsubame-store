@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import AppLayout from "./components/AppLayout";
 import Login from "./pages/Login";
+import Landing from "./pages/Landing";
 import Revenue from "./pages/Revenue";
 import Dashboard from "./pages/Dashboard";
 import Catalog from "./pages/Catalog";
@@ -27,21 +28,23 @@ export default function App() {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          {!role ? (
-            <Login onLogin={handleLogin} />
-          ) : (
-            <Routes>
-              <Route element={<AppLayout onLogout={handleLogout} role={role} />}>
-                <Route path="/" element={<Navigate to="/revenue" replace />} />
-                <Route path="/revenue" element={<Revenue />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/catalog" element={<Catalog />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/distributors" element={<Distributors />} />
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            {!role ? (
+              <Route path="/admin" element={<Navigate to="/login" replace />} />
+            ) : (
+              <Route path="/admin" element={<AppLayout onLogout={handleLogout} role={role} />}>
+                <Route path="/admin" element={<Navigate to="/admin/revenue" replace />} />
+                <Route path="/admin/revenue" element={<Revenue />} />
+                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/catalog" element={<Catalog />} />
+                <Route path="/admin/analytics" element={<Analytics />} />
+                <Route path="/admin/distributors" element={<Distributors />} />
               </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          )}
+            )}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

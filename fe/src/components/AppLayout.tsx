@@ -15,11 +15,11 @@ import {
 import { useState } from "react";
 
 const navItems = [
-  { to: "/revenue", label: "Revenue", icon: DollarSign },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/catalog", label: "Catalog", icon: ShoppingBag },
-  { to: "/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/distributors", label: "Distributors", icon: Truck },
+  { to: "/admin/revenue", label: "Revenue", icon: DollarSign },
+  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/admin/catalog", label: "Catalog", icon: ShoppingBag },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/distributors", label: "Distributors", icon: Truck },
 ];
 
 interface AppLayoutProps {
@@ -31,8 +31,6 @@ export default function AppLayout({ onLogout, role }: AppLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
-
-  if (location.pathname === "/") return <Navigate to="/dashboard" replace />;
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
