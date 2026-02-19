@@ -3,12 +3,12 @@ FROM node:18
 WORKDIR /app
 
 # Install dependencies
-COPY fe-tsubame/package*.json ./fe-tsubame/
-WORKDIR /app/fe-tsubame
-RUN npm install --silent
+COPY fe/package*.json ./fe/
+WORKDIR /app/fe
+RUN npm install
 
 # Copy app sources
-COPY fe-tsubame/ .
+COPY fe/ .
 
 # Start Vite in host-accessible mode for development
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

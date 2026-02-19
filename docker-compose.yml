@@ -14,13 +14,13 @@ services:
   #     - frontend
   #   restart: always
 
-  fe-tsubame:
+  fe:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fe-tsubame
+    container_name: fe
     ports:
-      - "8081:8081"
+      - "8082:8080"
     restart: always
 
   # certbot:
