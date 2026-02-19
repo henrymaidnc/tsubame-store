@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
 import {
+  DollarSign,
   LayoutDashboard,
   ShoppingBag,
   BarChart3,
@@ -14,6 +15,7 @@ import {
 import { useState } from "react";
 
 const navItems = [
+  { to: "/revenue", label: "Revenue", icon: DollarSign },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/catalog", label: "Catalog", icon: ShoppingBag },
   { to: "/analytics", label: "Analytics", icon: BarChart3 },

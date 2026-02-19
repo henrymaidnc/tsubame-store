@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import AppLayout from "./components/AppLayout";
 import Login from "./pages/Login";
+import Revenue from "./pages/Revenue";
 import Dashboard from "./pages/Dashboard";
 import Catalog from "./pages/Catalog";
 import Analytics from "./pages/Analytics";
@@ -31,7 +32,8 @@ export default function App() {
           ) : (
             <Routes>
               <Route element={<AppLayout onLogout={handleLogout} role={role} />}>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/" element={<Navigate to="/revenue" replace />} />
+                <Route path="/revenue" element={<Revenue />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/catalog" element={<Catalog />} />
                 <Route path="/analytics" element={<Analytics />} />
