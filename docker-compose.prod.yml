@@ -32,10 +32,11 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: https://tsubame-art.econictek.com/api
+      dockerfile: Dockerfile.prod
     container_name: frontend-tsubame-prod
+    environment:
+      # Prod: same origin via nginx
+      - VITE_API_URL=https://tsubame-art.econictek.com/api
     depends_on:
       - backend
     restart: unless-stopped
