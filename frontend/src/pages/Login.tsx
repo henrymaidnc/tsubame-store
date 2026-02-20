@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { Store, Eye, EyeOff } from "lucide-react";
-
-const CREDENTIALS = [
-  { email: "admin@tsubame.com", password: "admin123", role: "admin" },
-  { email: "user@tsubame.com", password: "user123", role: "user" },
-];
+import { authAPI } from "@/lib/api";
 
 interface LoginProps {
   onLogin: (role: string) => void;
@@ -17,21 +13,23 @@ export default function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setTimeout(() => {
-      const user = CREDENTIALS.find(
-        (c) => c.email === email && c.password === password
-      );
-      if (user) {
-        onLogin(user.role);
-      } else {
-        setError("Invalid email or password.");
-      }
+    
+    try {
+      const response = await authAPI.login({ email, password });
+      localStorage.setItem('access_token', response.access_token);
+      
+      // Get user info to determine role
+      const user = await authAPI.getCurrentUser();
+      onLogin(user.role);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Login failed. Please try again.");
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
 
   return (
