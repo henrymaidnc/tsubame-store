@@ -242,7 +242,11 @@ export default function Landing() {
 
 
   useEffect(() => {
-    fetch("/api/products")
+    const url =
+      typeof window !== "undefined" && window.location.hostname === "tsubame-art.econictek.com"
+        ? "/api/products"
+        : `${(import.meta.env.VITE_API_URL || "http://localhost:8002/api").replace(/\/$/, "")}/products`;
+    fetch(url)
       .then((res) => {
         if (!res.ok) return [];
         return res.json();

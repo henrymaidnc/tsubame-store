@@ -1,19 +1,21 @@
 import axios from 'axios';
 
 function getApiBaseUrl(): string {
-  const env = import.meta.env.VITE_API_URL;
   if (typeof window !== 'undefined') {
-    const origin = window.location.origin;
-    const isHttps = window.location.protocol === 'https:';
+    if (window.location.hostname === 'tsubame-art.econictek.com') {
+      return `${window.location.origin}/api`;
+    }
+    const env = import.meta.env.VITE_API_URL;
     if (env) {
+      const isHttps = window.location.protocol === 'https:';
       if (isHttps && env.startsWith('http://')) {
         return env.replace('http://', 'https://');
       }
       return env.replace(/\/$/, '');
     }
-    return `${origin}/api`;
+    return 'http://localhost:8002/api';
   }
-  return env || 'http://localhost:8002/api';
+  return import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
 }
 
 const API_BASE_URL = getApiBaseUrl();
