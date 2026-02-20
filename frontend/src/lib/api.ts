@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -25,6 +25,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
       window.location.href = '/login';
+      console.log('Unauthorized, redirecting to login');
     }
     return Promise.reject(error);
   }
@@ -48,17 +49,6 @@ export interface Product {
   description: string;
   image: string;
 }
-
-export interface Revenue {
-  month: string;
-  konbini: number;
-  shopee: number;
-  washi: number;
-  arimi: number;
-  airy: number;
-  total: number;
-}
-
 export interface RevenueSummary {
   total_revenue: number;
   average_revenue: number;
@@ -104,19 +94,6 @@ export const productsAPI = {
   
   getById: async (id: number): Promise<Product> => {
     const response = await api.get(`/products/${id}`);
-    return response.data;
-  },
-};
-
-// Revenue API
-export const revenueAPI = {
-  getAll: async (): Promise<Revenue[]> => {
-    const response = await api.get('/revenue');
-    return response.data;
-  },
-  
-  getSummary: async (): Promise<RevenueSummary> => {
-    const response = await api.get('/revenue/summary');
     return response.data;
   },
 };

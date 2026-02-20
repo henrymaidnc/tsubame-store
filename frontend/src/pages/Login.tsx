@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Store, Eye, EyeOff } from "lucide-react";
 import { authAPI } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
   onLogin: (role: string) => void;
@@ -12,6 +13,7 @@ export default function Login({ onLogin }: LoginProps) {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +27,9 @@ export default function Login({ onLogin }: LoginProps) {
       // Get user info to determine role
       const user = await authAPI.getCurrentUser();
       onLogin(user.role);
+      
+      // Redirect to admin page
+      navigate('/admin');
     } catch (err: any) {
       setError(err.response?.data?.detail || "Login failed. Please try again.");
     } finally {
