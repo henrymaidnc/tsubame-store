@@ -1,6 +1,22 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
+function getApiBaseUrl(): string {
+  const env = import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined') {
+    const origin = window.location.origin;
+    const isHttps = window.location.protocol === 'https:';
+    if (env) {
+      if (isHttps && env.startsWith('http://')) {
+        return env.replace('http://', 'https://');
+      }
+      return env.replace(/\/$/, '');
+    }
+    return `${origin}/api`;
+  }
+  return env || 'http://localhost:8002/api';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
