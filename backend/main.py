@@ -11,6 +11,7 @@ Swagger UI: /api/docs   (test all endpoints)
 ReDoc:     /api/redoc
 OpenAPI:   /api/openapi.json
 """
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,11 +29,20 @@ app = FastAPI(
     redoc_url=settings.redoc_url,
 )
 
+# CORS configuration for development and production
+if os.getenv("ENVIRONMENT") == "production":
+    # Production: Use specific origins from environment
+    cors_origins_env = os.getenv("CORS_ORIGINS", "https://tsubame-art.econictek.com")
+    allowed_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+else:
+    # Development: Allow all origins
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
