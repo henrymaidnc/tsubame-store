@@ -3,7 +3,7 @@ services:
     build: ./backend
     container_name: backend-tsubame
     ports:
-      - "8002:8000"
+      - "8002:8001"
     env_file:
       - .env
     volumes:
@@ -36,14 +36,17 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     container_name: frontend-tsubame
     ports:
-      - "8082:8080"
+      - "8082:8082"
     depends_on:
       - backend
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - VITE_API_URL=http://localhost:8002
 
 volumes:
   postgres_data:
