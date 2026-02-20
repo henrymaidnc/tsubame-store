@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
+
 
 # User schemas
 class UserBase(BaseModel):
@@ -8,18 +9,22 @@ class UserBase(BaseModel):
     email: EmailStr
     role: str
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     role: str = "user"
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
 class Token(BaseModel):
     access_token: str
     token_type: str
+
 
 # Material schemas
 class MaterialBase(BaseModel):
@@ -34,6 +39,25 @@ class MaterialBase(BaseModel):
     class Config:
         from_attributes = True
 
+
+class MaterialCreate(BaseModel):
+    name: str
+    unit: str
+    quantity: int
+    min_stock_level: int
+    status: str
+    price: float
+
+
+class MaterialUpdate(BaseModel):
+    name: Optional[str] = None
+    unit: Optional[str] = None
+    quantity: Optional[int] = None
+    min_stock_level: Optional[int] = None
+    status: Optional[str] = None
+    price: Optional[float] = None
+
+
 class ProductMaterialBase(BaseModel):
     id: int
     material_id: int
@@ -43,7 +67,7 @@ class ProductMaterialBase(BaseModel):
     class Config:
         from_attributes = True
 
-# Product schemas
+
 class ProductBase(BaseModel):
     id: int
     name: str
@@ -56,7 +80,7 @@ class ProductBase(BaseModel):
     class Config:
         from_attributes = True
 
-# Inventory schemas
+
 class InventoryBase(BaseModel):
     id: int
     product_id: int
@@ -66,8 +90,10 @@ class InventoryBase(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ProductWithInventory(ProductBase):
     inventory: Optional[InventoryBase] = None
+
 
 class ProductCreate(BaseModel):
     name: str
@@ -77,6 +103,7 @@ class ProductCreate(BaseModel):
     cost: float
     image: str
 
+
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
@@ -85,6 +112,7 @@ class ProductUpdate(BaseModel):
     cost: Optional[float] = None
     image: Optional[str] = None
 
+
 # Distributor schemas
 class DistributorBase(BaseModel):
     id: int
@@ -92,6 +120,7 @@ class DistributorBase(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class DistributorDetailBase(BaseModel):
     id: int
@@ -106,7 +135,7 @@ class DistributorDetailBase(BaseModel):
     class Config:
         from_attributes = True
 
-# Order schemas
+
 class OrderBase(BaseModel):
     id: int
     date: datetime
@@ -115,6 +144,7 @@ class OrderBase(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class OrderDetailBase(BaseModel):
     id: int
@@ -126,7 +156,7 @@ class OrderDetailBase(BaseModel):
     class Config:
         from_attributes = True
 
-# Payment schemas
+
 class PaymentBase(BaseModel):
     id: int
     date: datetime
@@ -138,6 +168,7 @@ class PaymentBase(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # AuditLog schemas
 class AuditLogBase(BaseModel):
@@ -151,5 +182,3 @@ class AuditLogBase(BaseModel):
 
     class Config:
         from_attributes = True
-
-

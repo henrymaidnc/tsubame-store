@@ -1,52 +1,75 @@
 # Tsubame Store Backend
 
-FastAPI backend for Tsubame Store with JWT authentication and product management.
+FastAPI backend with **BaseCRUD** pattern, SQLAlchemy, and PostgreSQL. Structure follows [FastAPI bigger applications](https://fastapi.tiangolo.com/tutorial/bigger-applications/) best practices.
 
-## Features
+## Project structure
 
-- **Authentication**: JWT-based login system
-- **Products API**: CRUD operations for products
-- **Revenue API**: Revenue data and analytics
-- **Security**: Password hashing, JWT tokens
-- **CORS**: Cross-origin resource sharing
+```
+backend/
+├── main.py           # FastAPI app, mounts API under /api
+├── core/             # Config and dependencies
+│   ├── config.py     # Settings (DB, API prefix, auth)
+│   └── deps.py       # get_db, etc.
+├── crud/             # BaseCRUD + per-entity CRUD
+│   ├── base.py       # Generic BaseCRUD[Model, CreateSchema, UpdateSchema]
+│   ├── product.py    # product_crud
+│   └── material.py   # material_crud
+├── api/              # Routers (auth, products, materials)
+├── models/           # SQLAlchemy models + Pydantic schemas
+├── services/         # Auth helpers (password, JWT) — used by api/auth
+└── dependencies.py   # Re-exports core.deps (backward compat)
+```
 
-## API Endpoints
+## Testing in Swagger
 
-### Authentication
-- `POST /auth/login` - User login
-- `GET /auth/me` - Get current user info
+- **With Docker Compose (Nginx):**  
+  - API: `http://localhost/api`  
+  - **Swagger UI:** `http://localhost/api/docs`  
+  - ReDoc: `http://localhost/api/redoc`  
+  - OpenAPI JSON: `http://localhost/api/openapi.json`
 
-### Products
-- `GET /products` - Get all products
-- `GET /products/{id}` - Get specific product
+- **Backend only (no Nginx):**  
+  - **Swagger UI:** `http://localhost:8002/api/docs`  
+  - (Backend exposed on port 8002 when running `docker compose up`)
 
-### Revenue
-- `GET /revenue` - Get all revenue data
-- `GET /revenue/summary` - Get revenue summary
+In Swagger you can try **GET /api/products**, **POST /api/auth/login**, then use **Authorize** with the returned Bearer token for **GET /api/auth/me**.
+
+## BaseCRUD pattern (scaling retail modules)
+
+`crud/base.py` defines a generic `BaseCRUD[ModelT, CreateSchemaT, UpdateSchemaT]` with:
+
+- `get_multi(db, skip, limit, **filters)`
+- `get(db, id)` / `get_or_404(db, id, detail=...)`
+- `create(db, schema=...)`
+- `update(db, id, schema=..., detail=...)`
+- `delete(db, id, detail=...)`
+
+To add a new module (e.g. Distributors):
+
+1. Add `DistributorCreate` / `DistributorUpdate` in `models/schemas.py`.
+2. Add `crud/distributor.py`:  
+   `class DistributorCRUD(BaseCRUD[Distributor, DistributorCreate, DistributorUpdate]): __model__ = Distributor`  
+   and `distributor_crud = DistributorCRUD()`.
+3. Add `api/distributors.py` with router using `distributor_crud`.
+4. In `main.py`: `app.include_router(distributors.router, prefix=settings.api_v1_prefix)`.
 
 ## Setup
 
-1. Install dependencies:
 ```bash
 pip install -r requirements.txt
+python main.py   # or: uvicorn main:app --host 0.0.0.0 --port 8001
 ```
 
-2. Run the server:
-```bash
-python main.py
-```
+With Docker Compose (see repo root): Nginx proxies `/api/` to the backend; use `http://localhost/api/docs` for Swagger.
 
-Or with Docker:
-```bash
-docker-compose up backend
-```
+## Default users (after init_db)
 
-## Default Users
+- **Admin:** admin@tsubame.com / admin123  
+- **User:** user@tsubame.com / user123  
 
-- **Admin**: admin@tsubame.com / password (any password works for demo)
-- **User**: user@tsubame.com / password (any password works for demo)
+## Environment variables
 
-## Environment Variables
-
-- `SECRET_KEY`: JWT secret key (change in production)
-- `DATABASE_URL`: Database connection string (for future database integration)
+- `SECRET_KEY` – JWT secret (change in production)  
+- `POSTGRES_*` / `DATABASE_URL` – PostgreSQL connection  
+- `API_V1_PREFIX` – default `/api`  
+- `ACCESS_TOKEN_EXPIRE_MINUTES` – JWT expiry  

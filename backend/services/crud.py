@@ -3,16 +3,19 @@ from models.database import User, Product
 from models.schemas import UserCreate, ProductCreate, ProductUpdate
 from passlib.context import CryptContext
 from typing import Optional, List
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 # User services
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
@@ -53,7 +56,7 @@ def update_product(db: Session, product_id: int, product: ProductUpdate) -> Prod
     update_data = product.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_product, field, value)
-    
+
     db.commit()
     db.refresh(db_product)
     return db_product
@@ -62,8 +65,7 @@ def delete_product(db: Session, product_id: int) -> Product:
     product = get_product_by_id(db, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    
+
     db.delete(product)
     db.commit()
     return product
-

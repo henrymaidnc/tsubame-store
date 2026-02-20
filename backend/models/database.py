@@ -1,16 +1,17 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, Text, ForeignKey, Float
+from datetime import datetime
+
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-import os
-from dotenv import load_dotenv
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy import create_engine
 
-load_dotenv()
+from core.config import settings
 
-DATABASE_URL = os.getenv("DATABASE_URL", f"postgresql://{os.getenv('POSTGRES_USER', 'postgres')}:{os.getenv('POSTGRES_PASSWORD', 'password')}@postgres:5432/{os.getenv('POSTGRES_DB', 'tsubame_store')}")
-
+DATABASE_URL = settings.database_url
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "users"
@@ -19,7 +20,6 @@ class User(Base):
     hashed_password = Column(String)
     role = Column(String)
 
-from datetime import datetime
 
 class Material(Base):
     __tablename__ = "materials"
@@ -33,6 +33,7 @@ class Material(Base):
 
     product_materials = relationship("ProductMaterial", back_populates="material")
 
+
 class ProductMaterial(Base):
     __tablename__ = "product_materials"
     id = Column(Integer, primary_key=True, index=True)
@@ -42,6 +43,7 @@ class ProductMaterial(Base):
 
     material = relationship("Material", back_populates="product_materials")
     product = relationship("Product", back_populates="product_materials")
+
 
 class Product(Base):
     __tablename__ = "products"
@@ -57,6 +59,7 @@ class Product(Base):
     inventory = relationship("Inventory", back_populates="product", uselist=False)
     order_details = relationship("OrderDetail", back_populates="product")
 
+
 class Inventory(Base):
     __tablename__ = "inventory"
     id = Column(Integer, primary_key=True, index=True)
@@ -66,12 +69,14 @@ class Inventory(Base):
 
     product = relationship("Product", back_populates="inventory")
 
+
 class Distributor(Base):
     __tablename__ = "distributors"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
 
     details = relationship("DistributorDetail", back_populates="distributor")
+
 
 class DistributorDetail(Base):
     __tablename__ = "distributor_details"
@@ -87,6 +92,7 @@ class DistributorDetail(Base):
     distributor = relationship("Distributor", back_populates="details")
     orders = relationship("Order", back_populates="distributor_detail")
 
+
 class Order(Base):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True, index=True)
@@ -97,6 +103,7 @@ class Order(Base):
     distributor_detail = relationship("DistributorDetail", back_populates="orders")
     order_details = relationship("OrderDetail", back_populates="order")
     payments = relationship("Payment", back_populates="order")
+
 
 class OrderDetail(Base):
     __tablename__ = "order_details"
@@ -109,6 +116,7 @@ class OrderDetail(Base):
     order = relationship("Order", back_populates="order_details")
     product = relationship("Product", back_populates="order_details")
 
+
 class Payment(Base):
     __tablename__ = "payments"
     id = Column(Integer, primary_key=True, index=True)
@@ -120,6 +128,7 @@ class Payment(Base):
     transaction_id = Column(String)
 
     order = relationship("Order", back_populates="payments")
+
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"

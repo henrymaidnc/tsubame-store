@@ -1,9 +1,4 @@
-from sqlalchemy.orm import Session
+"""Re-export for backward compatibility. Prefer: from core.deps import get_db."""
+from core.deps import get_db
 
-def get_db():
-    from models.database import SessionLocal
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+__all__ = ["get_db"]

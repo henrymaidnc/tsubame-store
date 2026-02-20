@@ -1,8 +1,8 @@
 FROM nginx:alpine
 
-COPY --from=build /app/frontend/dist /usr/share/nginx/html
-COPY frontend/nginx.conf /etc/nginx/nginx.conf
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 8082
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

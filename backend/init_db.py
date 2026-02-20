@@ -1,8 +1,20 @@
-from sqlalchemy.orm import Session
-from main import engine, SessionLocal, User, Product, Inventory, Distributor, Order
+from models.database import (
+    SessionLocal,
+    User,
+    Product,
+    Inventory,
+    Distributor,
+    DistributorDetail,
+    Order,
+    OrderDetail,
+    Material,
+    ProductMaterial,
+    Payment,
+)
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def init_db():
     db = SessionLocal()
@@ -14,115 +26,116 @@ def init_db():
             role="admin"
         )
         db.add(admin_user)
-        
+
         # Create regular user
         regular_user = User(
-            email="user@tsubame.com", 
+            email="user@tsubame.com",
             hashed_password=pwd_context.hash("user123"),
             role="user"
         )
         db.add(regular_user)
-        
+
+        # Create sample Materials
+        materials = [
+            Material(name="Vinyl Paper", unit="roll", quantity=100, min_stock_level=20, status="In Stock", price=15.0),
+            Material(name="Matte Laminate", unit="roll", quantity=50, min_stock_level=10, status="In Stock", price=25.0),
+            Material(name="Holographic Film", unit="roll", quantity=10, min_stock_level=5, status="Low Stock", price=50.0)
+        ]
+        for m in materials:
+            db.add(m)
+        db.commit()
+
         # Create sample products
         products = [
             Product(
-                id=1,
-                name="Cáo mùa xuân Sticker",
-                category="Sticker",
-                amount=35000,
+                id=1, name="Cáo mùa xuân Sticker", category="Sticker", price=35000, cost=10000,
                 description="10x10cm waterproof matte laminated sticker + postcard set. Seasonal fox design.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Spring"
             ),
             Product(
-                id=2,
-                name="Cáo mùa hè Sticker",
-                category="Sticker",
-                amount=35000,
+                id=2, name="Cáo mùa hè Sticker", category="Sticker", price=35000, cost=10000,
                 description="Summer fox sticker set with vibrant colors and postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Summer"
             ),
             Product(
-                id=3,
-                name="Cáo mùa thu Sticker",
-                category="Sticker",
-                amount=35000,
+                id=3, name="Cáo mùa thu Sticker", category="Sticker", price=35000, cost=10000,
                 description="Autumn fox sticker with warm tones and postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Autumn"
-            ),
-            Product(
-                id=4,
-                name="Cáo mùa đông Sticker",
-                category="Sticker",
-                amount=35000,
-                description="Winter fox sticker set in cool blue tones with postcard.",
-                image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Winter"
-            ),
-            Product(
-                id=5,
-                name="Wagashi Sticker",
-                category="Sticker",
-                amount=35000,
-                description="Japanese wagashi sweets themed sticker + postcard.",
-                image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🍡+Wagashi"
             )
         ]
-        
-        for product in products:
-            db.add(product)
-
+        for product in products: db.add(product)
         db.commit()
 
-        # Create sample distributors
-        distributors = [
-            Distributor(id=1, name="Konbini 30%", contact_name="Aki", mobile_phone="0912345678", address="123 Tokyo St", branch="Main"),
-            Distributor(id=2, name="Shopee", contact_name="Bao", mobile_phone="0987654321", address="Online", branch="VN"),
-            Distributor(id=3, name="Washi 30%", contact_name="Chi", mobile_phone="0901234567", address="456 Shibuya", branch="Main"),
-            Distributor(id=4, name="Arimi", contact_name="Dung", mobile_phone="0934567890", address="789 Kyoto", branch="Store 1")
+        # Link Materials to Products
+        pm_links = [
+            ProductMaterial(material_id=1, product_id=1, quantity=1),
+            ProductMaterial(material_id=2, product_id=1, quantity=1),
+            ProductMaterial(material_id=1, product_id=2, quantity=1),
+            ProductMaterial(material_id=2, product_id=2, quantity=1),
+            ProductMaterial(material_id=1, product_id=3, quantity=1)
         ]
-        
-        for dist in distributors:
-            db.add(dist)
-            
+        for pm in pm_links: db.add(pm)
         db.commit()
 
         # Create sample inventories linked to distributors just added
         inventories = [
-            Inventory(product_id=1, number=142, distributor="Konbini 30%"),
-            Inventory(product_id=2, number=98, distributor="Shopee"),
-            Inventory(product_id=3, number=15, distributor="Washi 30%"),
-            Inventory(product_id=4, number=0, distributor="Arimi"),
-            Inventory(product_id=5, number=74, distributor="Konbini 30%")
+            Inventory(product_id=1, status="In Stock", stock=142),
+            Inventory(product_id=2, status="In Stock", stock=98),
+            Inventory(product_id=3, status="Low Stock", stock=15)
         ]
+        for inv in inventories: db.add(inv)
+        db.commit()
 
-        for inv in inventories:
-            db.add(inv)
-            
-        db.commit()
-        
-        # Create sample orders linking inventory to distributors
-        orders = [
-            Order(inventory_id=1, distributor_id=1, number=20),
-            Order(inventory_id=2, distributor_id=2, number=15),
-            Order(inventory_id=3, distributor_id=3, number=5),
-            Order(inventory_id=5, distributor_id=1, number=30)
+        # Create sample distributors
+        distributors = [
+            Distributor(id=1, name="Konbini 30%"),
+            Distributor(id=2, name="Shopee"),
+            Distributor(id=3, name="Washi 30%")
         ]
-        
-        for order in orders:
-            db.add(order)
-            
+        for dist in distributors: db.add(dist)
         db.commit()
-        
+
+        distributor_details = [
+            DistributorDetail(distributor_id=1, branch="Main", address="123 Tokyo St", contact_name="Aki", phone_number="0912345678", channel="OFFLINE", contract="Standard"),
+            DistributorDetail(distributor_id=2, branch="VN", address="Online", contact_name="Bao", phone_number="0987654321", channel="ONLINE", contract="Enterprise"),
+            DistributorDetail(distributor_id=3, branch="Main", address="456 Shibuya", contact_name="Chi", phone_number="0901234567", channel="CONSIGNMENT", contract="Standard")
+        ]
+        for dd in distributor_details: db.add(dd)
+        db.commit()
+
+        # Create sample orders linking details 
+        orders = [
+            Order(id=1, distributor_detail_id=1, total_price=700000), # 20 qty * 35000
+            Order(id=2, distributor_detail_id=2, total_price=525000), # 15 qty * 35000
+        ]
+        for order in orders: db.add(order)
+        db.commit()
+
+        order_details = [
+            OrderDetail(order_id=1, product_id=1, quantity=20, price=35000),
+            OrderDetail(order_id=2, product_id=2, quantity=15, price=35000)
+        ]
+        for od in order_details: db.add(od)
+        db.commit()
+
+        payments = [
+            Payment(order_id=1, method="Bank Transfer", status="Completed", amount=700000, transaction_id="TXN12345"),
+            Payment(order_id=2, method="Credit Card", status="Pending", amount=525000, transaction_id="TXN67890")
+        ]
+        for payment in payments: db.add(payment)
+        db.commit()
 
         print("Database initialized successfully!")
         print("Users created:")
         print("- admin@tsubame.com (password: admin123)")
         print("- user@tsubame.com (password: user123)")
-        
+
     except Exception as e:
         print(f"Error initializing database: {e}")
         db.rollback()
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     init_db()

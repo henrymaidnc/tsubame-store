@@ -36,8 +36,8 @@ type Status = "in-stock" | "low-stock" | "out-of-stock";
 interface Inventory {
   id: number;
   product_id: number;
-  number: number;
-  distributor: string;
+  stock: number;
+  status: string;
 }
 
 export interface Product {
@@ -45,13 +45,13 @@ export interface Product {
   name: string;
   category: string;
   image: string;
-  amount: number;
+  price: number;
   description: string;
   inventory?: Inventory | null;
 }
 
 const getProductStatus = (product: Product): Status => {
-  const stock = product.inventory?.number || 0;
+  const stock = product.inventory?.stock || 0;
   if (stock > 20) return "in-stock";
   if (stock > 0) return "low-stock";
   return "out-of-stock";
@@ -279,7 +279,8 @@ export default function Landing() {
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.description.toLowerCase().includes(search.toLowerCase());
     const matchCat = category === "All" || p.category === category;
-    const matchPrice = p.amount >= range.min && p.amount <= range.max;
+    // Price logic
+    const matchPrice = p.price >= range.min && p.price <= range.max;
     const matchAvail = !availableOnly || getProductStatus(p) !== "out-of-stock";
     return matchSearch && matchCat && matchPrice && matchAvail;
   });
@@ -1046,7 +1047,7 @@ export default function Landing() {
                             <div className="flex items-center gap-2.5">
                               <span className="text-lg font-bold text-foreground">
                                 <span className="text-primary mr-1">đ</span>
-                                {product.amount.toLocaleString()}đ
+                                {product.price.toLocaleString()}đ
                               </span>
                               <span
                                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge}`}
@@ -1195,7 +1196,7 @@ export default function Landing() {
 
                 <div className="text-2xl font-bold text-foreground">
                   <span className="text-primary mr-1">đ</span>
-                  {quickView.amount.toLocaleString()}
+                  {quickView.price.toLocaleString()}
                   <span className="text-base font-medium text-muted-foreground ml-1">
                     đ
                   </span>
@@ -1204,21 +1205,14 @@ export default function Landing() {
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-muted/50 rounded-xl p-3.5">
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">
-                      Stock
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      In Stock
                     </p>
-                    <p className="text-sm font-semibold text-foreground">
-                      {quickView.inventory?.number || 0} units
-                    </p>
-                  </div>
-                  <div className="bg-muted/50 rounded-xl p-3.5">
-                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">
-                      Distributor
-                    </p>
-                    <p className="text-base font-bold text-foreground truncate">
-                      {quickView.distributor}
+                    <p className="text-xs font-semibold text-foreground">
+                      {quickView.inventory?.stock || 0} units
                     </p>
                   </div>
+
                 </div>
 
                 {/* Actions */}
