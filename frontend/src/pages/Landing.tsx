@@ -242,11 +242,7 @@ export default function Landing() {
 
 
   useEffect(() => {
-    const base =
-      typeof window !== 'undefined'
-        ? `${window.location.origin}/api`
-        : (import.meta.env.VITE_API_URL || "http://localhost:8002/api").replace(/\/$/, "");
-    fetch(`${base}/products`)
+    fetch("/api/products")
       .then((res) => {
         if (!res.ok) return [];
         return res.json();
