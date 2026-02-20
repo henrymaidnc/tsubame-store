@@ -57,7 +57,7 @@ To add a new module (e.g. Distributors):
 
 ```bash
 pip install -r requirements.txt
-python main.py   # or: uvicorn main:app --host 0.0.0.0 --port 8001
+python main.py   # or: uvicorn main:app --host 0.0.0.0 --port 8002
 ```
 
 With Docker Compose (see repo root): Nginx proxies `/api/` to the backend; use `http://localhost/api/docs` for Swagger.
