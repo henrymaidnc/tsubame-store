@@ -242,16 +242,23 @@ export default function Landing() {
 
 
   useEffect(() => {
-    fetch((import.meta.env.VITE_API_URL || "http://localhost:8002") + "/products/")
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        const cats = Array.from(new Set(data.map((p: Product) => p.category))) as string[];
+    const base = (import.meta.env.VITE_API_URL || "http://localhost:8002/api").replace(/\/$/, "");
+    fetch(`${base}/products`)
+      .then((res) => {
+        if (!res.ok) return [];
+        return res.json();
+      })
+      .then((data) => {
+        const list = Array.isArray(data) ? data : [];
+        setProducts(list);
+        const cats = Array.from(new Set(list.map((p: Product) => p.category))) as string[];
         setCategories(["All", ...cats]);
         setIsLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Error fetching products:", err);
+        setProducts([]);
+        setCategories(["All"]);
         setIsLoading(false);
       });
   }, []);
@@ -276,8 +283,8 @@ export default function Landing() {
   const range = priceRanges[priceRange];
   const filtered = products.filter((p) => {
     const matchSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase());
+      (p.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.description ?? "").toLowerCase().includes(search.toLowerCase());
     const matchCat = category === "All" || p.category === category;
     // Price logic
     const matchPrice = p.price >= range.min && p.price <= range.max;

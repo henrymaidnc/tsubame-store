@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Store, Eye, EyeOff } from "lucide-react";
 
 const CREDENTIALS = [
-  { email: "admin@store.com", password: "admin123", role: "admin" },
-  { email: "distributor@store.com", password: "dist123", role: "distributor" },
-  { email: "customer@store.com", password: "cust123", role: "customer" },
+  { email: "admin@tsubame.com", password: "admin123", role: "admin" },
+  { email: "user@tsubame.com", password: "user123", role: "user" },
 ];
 
 interface LoginProps {

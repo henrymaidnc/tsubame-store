@@ -93,8 +93,13 @@ export const authAPI = {
 // Products API
 export const productsAPI = {
   getAll: async (): Promise<Product[]> => {
-    const response = await api.get('/products');
-    return response.data;
+    try {
+      const response = await api.get('/products');
+      const data = response.data;
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
   },
   
   getById: async (id: number): Promise<Product> => {
