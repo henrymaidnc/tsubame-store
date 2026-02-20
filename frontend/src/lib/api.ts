@@ -2,18 +2,11 @@ import axios from 'axios';
 
 function getApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
-    if (window.location.hostname === 'tsubame-art.econictek.com') {
+    if (window.location.protocol === 'https:') {
       return `${window.location.origin}/api`;
     }
     const env = import.meta.env.VITE_API_URL;
-    if (env) {
-      const isHttps = window.location.protocol === 'https:';
-      if (isHttps && env.startsWith('http://')) {
-        return env.replace('http://', 'https://');
-      }
-      return env.replace(/\/$/, '');
-    }
-    return 'http://localhost:8002/api';
+    return (env || 'http://localhost:8002/api').replace(/\/$/, '');
   }
   return import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
 }

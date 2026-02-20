@@ -243,7 +243,7 @@ export default function Landing() {
 
   useEffect(() => {
     const url =
-      typeof window !== "undefined" && window.location.hostname === "tsubame-art.econictek.com"
+      typeof window !== "undefined" && window.location.protocol === "https:"
         ? "/api/products"
         : `${(import.meta.env.VITE_API_URL || "http://localhost:8002/api").replace(/\/$/, "")}/products`;
     fetch(url)
