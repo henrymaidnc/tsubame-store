@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from main import engine, SessionLocal, User, Product, Revenue
+from main import engine, SessionLocal, User, Product, Inventory, Distributor, Order
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -29,11 +29,7 @@ def init_db():
                 id=1,
                 name="Cáo mùa xuân Sticker",
                 category="Sticker",
-                price=35000,
-                stock=142,
-                status="in-stock",
-                distributor="Konbini 30%",
-                batch_number="STK-2025-001",
+                amount=35000,
                 description="10x10cm waterproof matte laminated sticker + postcard set. Seasonal fox design.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Spring"
             ),
@@ -41,11 +37,7 @@ def init_db():
                 id=2,
                 name="Cáo mùa hè Sticker",
                 category="Sticker",
-                price=35000,
-                stock=98,
-                status="in-stock",
-                distributor="Shopee",
-                batch_number="STK-2025-002",
+                amount=35000,
                 description="Summer fox sticker set with vibrant colors and postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Summer"
             ),
@@ -53,11 +45,7 @@ def init_db():
                 id=3,
                 name="Cáo mùa thu Sticker",
                 category="Sticker",
-                price=35000,
-                stock=15,
-                status="low-stock",
-                distributor="Washi 30%",
-                batch_number="STK-2025-003",
+                amount=35000,
                 description="Autumn fox sticker with warm tones and postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Autumn"
             ),
@@ -65,11 +53,7 @@ def init_db():
                 id=4,
                 name="Cáo mùa đông Sticker",
                 category="Sticker",
-                price=35000,
-                stock=0,
-                status="out-of-stock",
-                distributor="Arimi",
-                batch_number="STK-2025-004",
+                amount=35000,
                 description="Winter fox sticker set in cool blue tones with postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🦊+Winter"
             ),
@@ -77,11 +61,7 @@ def init_db():
                 id=5,
                 name="Wagashi Sticker",
                 category="Sticker",
-                price=35000,
-                stock=74,
-                status="in-stock",
-                distributor="Konbini 30%",
-                batch_number="STK-2025-005",
+                amount=35000,
                 description="Japanese wagashi sweets themed sticker + postcard.",
                 image="https://placehold.co/300x300/1a1f35/4dd9f0?text=🍡+Wagashi"
             )
@@ -89,87 +69,50 @@ def init_db():
         
         for product in products:
             db.add(product)
-        
-        # Create sample revenue data
-        revenue_data = [
-            Revenue(
-                month="May 2024",
-                konbini=45000000,
-                shopee=38000000,
-                washi=32000000,
-                arimi=28000000,
-                airy=25000000,
-                total=168000000
-            ),
-            Revenue(
-                month="Jun 2024",
-                konbini=48000000,
-                shopee=42000000,
-                washi=35000000,
-                arimi=30000000,
-                airy=27000000,
-                total=182000000
-            ),
-            Revenue(
-                month="Jul 2024",
-                konbini=52000000,
-                shopee=45000000,
-                washi=38000000,
-                arimi=32000000,
-                airy=29000000,
-                total=196000000
-            ),
-            Revenue(
-                month="Aug 2024",
-                konbini=55000000,
-                shopee=48000000,
-                washi=40000000,
-                arimi=35000000,
-                airy=31000000,
-                total=209000000
-            ),
-            Revenue(
-                month="Sep 2024",
-                konbini=58000000,
-                shopee=50000000,
-                washi=42000000,
-                arimi=37000000,
-                airy=33000000,
-                total=220000000
-            ),
-            Revenue(
-                month="Oct 2024",
-                konbini=60000000,
-                shopee=52000000,
-                washi=44000000,
-                arimi=39000000,
-                airy=35000000,
-                total=230000000
-            ),
-            Revenue(
-                month="Nov 2024",
-                konbini=62000000,
-                shopee=54000000,
-                washi=46000000,
-                arimi=41000000,
-                airy=37000000,
-                total=240000000
-            ),
-            Revenue(
-                month="Dec 2024",
-                konbini=65000000,
-                shopee=58000000,
-                washi=50000000,
-                arimi=45000000,
-                airy=40000000,
-                total=258000000
-            )
+
+        db.commit()
+
+        # Create sample distributors
+        distributors = [
+            Distributor(id=1, name="Konbini 30%", contact_name="Aki", mobile_phone="0912345678", address="123 Tokyo St", branch="Main"),
+            Distributor(id=2, name="Shopee", contact_name="Bao", mobile_phone="0987654321", address="Online", branch="VN"),
+            Distributor(id=3, name="Washi 30%", contact_name="Chi", mobile_phone="0901234567", address="456 Shibuya", branch="Main"),
+            Distributor(id=4, name="Arimi", contact_name="Dung", mobile_phone="0934567890", address="789 Kyoto", branch="Store 1")
         ]
         
-        for revenue in revenue_data:
-            db.add(revenue)
-        
+        for dist in distributors:
+            db.add(dist)
+            
         db.commit()
+
+        # Create sample inventories linked to distributors just added
+        inventories = [
+            Inventory(product_id=1, number=142, distributor="Konbini 30%"),
+            Inventory(product_id=2, number=98, distributor="Shopee"),
+            Inventory(product_id=3, number=15, distributor="Washi 30%"),
+            Inventory(product_id=4, number=0, distributor="Arimi"),
+            Inventory(product_id=5, number=74, distributor="Konbini 30%")
+        ]
+
+        for inv in inventories:
+            db.add(inv)
+            
+        db.commit()
+        
+        # Create sample orders linking inventory to distributors
+        orders = [
+            Order(inventory_id=1, distributor_id=1, number=20),
+            Order(inventory_id=2, distributor_id=2, number=15),
+            Order(inventory_id=3, distributor_id=3, number=5),
+            Order(inventory_id=5, distributor_id=1, number=30)
+        ]
+        
+        for order in orders:
+            db.add(order)
+            
+        db.commit()
+        
+
         print("Database initialized successfully!")
         print("Users created:")
         print("- admin@tsubame.com (password: admin123)")

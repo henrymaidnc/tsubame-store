@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.database import User, Product, Revenue
-from models.schemas import UserCreate, ProductCreate, ProductUpdate, RevenueCreate, RevenueUpdate
+from models.database import User, Product
+from models.schemas import UserCreate, ProductCreate, ProductUpdate
 from passlib.context import CryptContext
 from typing import Optional, List
 from fastapi import HTTPException, status
@@ -67,63 +67,3 @@ def delete_product(db: Session, product_id: int) -> Product:
     db.commit()
     return product
 
-# Revenue services
-def get_revenue_data(db: Session) -> List[Revenue]:
-    return db.query(Revenue).all()
-
-def get_revenue_by_id(db: Session, revenue_id: int) -> Optional[Revenue]:
-    return db.query(Revenue).filter(Revenue.id == revenue_id).first()
-
-def create_revenue(db: Session, revenue: RevenueCreate) -> Revenue:
-    db_revenue = Revenue(**revenue.dict())
-    db.add(db_revenue)
-    db.commit()
-    db.refresh(db_revenue)
-    return db_revenue
-
-def update_revenue(db: Session, revenue_id: int, revenue: RevenueUpdate) -> Revenue:
-    db_revenue = get_revenue_by_id(db, revenue_id)
-    if not db_revenue:
-        raise HTTPException(status_code=404, detail="Revenue data not found")
-    
-    update_data = revenue.dict(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(db_revenue, field, value)
-    
-    db.commit()
-    db.refresh(db_revenue)
-    return db_revenue
-
-def delete_revenue(db: Session, revenue_id: int) -> Revenue:
-    revenue = get_revenue_by_id(db, revenue_id)
-    if not revenue:
-        raise HTTPException(status_code=404, detail="Revenue data not found")
-    
-    db.delete(revenue)
-    db.commit()
-    return revenue
-
-def get_revenue_summary(db: Session):
-    revenue_data = get_revenue_data(db)
-    if not revenue_data:
-        return {
-            "total_revenue": 0,
-            "average_revenue": 0,
-            "max_revenue": 0,
-            "min_revenue": 0,
-            "months_count": 0
-        }
-    
-    total_revenue = sum(item.total for item in revenue_data)
-    months_count = len(revenue_data)
-    average_revenue = total_revenue / months_count if months_count > 0 else 0
-    max_revenue = max(item.total for item in revenue_data) if revenue_data else 0
-    min_revenue = min(item.total for item in revenue_data) if revenue_data else 0
-    
-    return {
-        "total_revenue": total_revenue,
-        "average_revenue": average_revenue,
-        "max_revenue": max_revenue,
-        "min_revenue": min_revenue,
-        "months_count": months_count
-    }

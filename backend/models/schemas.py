@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
+from datetime import datetime
 
 # User schemas
 class UserBase(BaseModel):
@@ -20,59 +21,135 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+# Material schemas
+class MaterialBase(BaseModel):
+    id: int
+    name: str
+    unit: str
+    quantity: int
+    min_stock_level: int
+    status: str
+    price: float
+
+    class Config:
+        from_attributes = True
+
+class ProductMaterialBase(BaseModel):
+    id: int
+    material_id: int
+    product_id: int
+    quantity: int
+
+    class Config:
+        from_attributes = True
+
 # Product schemas
 class ProductBase(BaseModel):
     id: int
     name: str
-    category: str
-    price: int
-    stock: int
-    status: str
-    distributor: str
-    batch_number: str
     description: str
+    category: str
+    price: float
+    cost: float
     image: str
 
-class ProductCreate(ProductBase):
-    pass
+    class Config:
+        from_attributes = True
+
+# Inventory schemas
+class InventoryBase(BaseModel):
+    id: int
+    product_id: int
+    status: str
+    stock: int
+
+    class Config:
+        from_attributes = True
+
+class ProductWithInventory(ProductBase):
+    inventory: Optional[InventoryBase] = None
+
+class ProductCreate(BaseModel):
+    name: str
+    description: str
+    category: str
+    price: float
+    cost: float
+    image: str
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
-    category: Optional[str] = None
-    price: Optional[int] = None
-    stock: Optional[int] = None
-    status: Optional[str] = None
-    distributor: Optional[str] = None
-    batch_number: Optional[str] = None
     description: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    cost: Optional[float] = None
     image: Optional[str] = None
 
-# Revenue schemas
-class RevenueBase(BaseModel):
+# Distributor schemas
+class DistributorBase(BaseModel):
     id: int
-    month: str
-    konbini: int
-    shopee: int
-    washi: int
-    arimi: int
-    airy: int
-    total: int
+    name: str
 
-class RevenueCreate(RevenueBase):
-    pass
+    class Config:
+        from_attributes = True
 
-class RevenueUpdate(BaseModel):
-    month: Optional[str] = None
-    konbini: Optional[int] = None
-    shopee: Optional[int] = None
-    washi: Optional[int] = None
-    arimi: Optional[int] = None
-    airy: Optional[int] = None
-    total: Optional[int] = None
+class DistributorDetailBase(BaseModel):
+    id: int
+    distributor_id: int
+    branch: str
+    address: str
+    contact_name: str
+    phone_number: str
+    channel: str
+    contract: str
 
-class RevenueSummary(BaseModel):
-    total_revenue: int
-    average_revenue: float
-    max_revenue: int
-    min_revenue: int
-    months_count: int
+    class Config:
+        from_attributes = True
+
+# Order schemas
+class OrderBase(BaseModel):
+    id: int
+    date: datetime
+    distributor_detail_id: int
+    total_price: float
+
+    class Config:
+        from_attributes = True
+
+class OrderDetailBase(BaseModel):
+    id: int
+    order_id: int
+    product_id: int
+    quantity: int
+    price: float
+
+    class Config:
+        from_attributes = True
+
+# Payment schemas
+class PaymentBase(BaseModel):
+    id: int
+    date: datetime
+    order_id: int
+    method: str
+    status: str
+    amount: float
+    transaction_id: str
+
+    class Config:
+        from_attributes = True
+
+# AuditLog schemas
+class AuditLogBase(BaseModel):
+    id: int
+    entity: str
+    entity_id: int
+    action: str
+    changed_by: str
+    timestamp: datetime
+    details: str
+
+    class Config:
+        from_attributes = True
+
+

@@ -1,4 +1,4 @@
-import { products } from "@/data/mockData";
+
 import { useState, useEffect, useRef } from "react";
 import {
   Search,
@@ -33,7 +33,29 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 
 /* ─── Types ─────────────────────────────────────────────── */
 type Status = "in-stock" | "low-stock" | "out-of-stock";
-type Product = (typeof products)[0];
+interface Inventory {
+  id: number;
+  product_id: number;
+  number: number;
+  distributor: string;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+  amount: number;
+  description: string;
+  inventory?: Inventory | null;
+}
+
+const getProductStatus = (product: Product): Status => {
+  const stock = product.inventory?.number || 0;
+  if (stock > 20) return "in-stock";
+  if (stock > 0) return "low-stock";
+  return "out-of-stock";
+};
 type LandingTheme = "default" | "green" | "dark";
 
 const themeOptions: { id: LandingTheme; label: string; swatch: string }[] = [
@@ -66,10 +88,7 @@ const statusConfig: Record<
   },
 };
 
-const categories = [
-  "All",
-  ...Array.from(new Set(products.map((p) => p.category))),
-];
+
 const priceRanges = [
   { label: "All Prices", min: 0, max: Infinity },
   { label: "Under 35,000đ", min: 0, max: 35000 },
@@ -212,6 +231,8 @@ export default function Landing() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
   const [isLoading, setIsLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -221,8 +242,18 @@ export default function Landing() {
 
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    fetch((import.meta.env.VITE_API_URL || "http://localhost:8002") + "/products/")
+      .then(res => res.json())
+      .then(data => {
+        setProducts(data);
+        const cats = Array.from(new Set(data.map((p: Product) => p.category))) as string[];
+        setCategories(["All", ...cats]);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching products:", err);
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -248,8 +279,8 @@ export default function Landing() {
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.description.toLowerCase().includes(search.toLowerCase());
     const matchCat = category === "All" || p.category === category;
-    const matchPrice = p.price >= range.min && p.price <= range.max;
-    const matchAvail = !availableOnly || p.status !== "out-of-stock";
+    const matchPrice = p.amount >= range.min && p.amount <= range.max;
+    const matchAvail = !availableOnly || getProductStatus(p) !== "out-of-stock";
     return matchSearch && matchCat && matchPrice && matchAvail;
   });
 
@@ -628,7 +659,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* WHY CHOOSE US                                        */}
       {/* ════════════════════════════════════════════════════ */}
-      <section id="about" className="py-20 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="about" className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             eyebrow="Why TsubameArt"
@@ -677,7 +708,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       <section
         id="products"
-        className="py-20 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20"
+        className="py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20"
       >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
@@ -878,8 +909,9 @@ export default function Landing() {
             >
               <AnimatePresence>
                 {filtered.map((product, index) => {
-                  const { label, dot, badge } = statusConfig[product.status];
-                  const outOfStock = product.status === "out-of-stock";
+                  const pStatus = getProductStatus(product);
+                  const { label, dot, badge } = statusConfig[pStatus];
+                  const outOfStock = pStatus === "out-of-stock";
 
                   if (viewMode === "grid") {
                     return (
@@ -1013,7 +1045,8 @@ export default function Landing() {
                           <div className="flex items-center justify-between mt-3 gap-3">
                             <div className="flex items-center gap-2.5">
                               <span className="text-lg font-bold text-foreground">
-                                {product.price.toLocaleString()}đ
+                                <span className="text-primary mr-1">đ</span>
+                                {product.amount.toLocaleString()}đ
                               </span>
                               <span
                                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge}`}
@@ -1057,7 +1090,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* NEWSLETTER / CTA                                     */}
       {/* ════════════════════════════════════════════════════ */}
-      <section id="contact" className="py-20 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="relative bg-foreground rounded-3xl overflow-hidden">
             {/* Decorative */}
@@ -1135,14 +1168,14 @@ export default function Landing() {
                 </button>
                 {/* Status */}
                 <span
-                  className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusConfig[quickView.status].badge
+                  className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusConfig[getProductStatus(quickView)].badge
                     }`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${statusConfig[quickView.status].dot
+                    className={`w-1.5 h-1.5 rounded-full ${statusConfig[getProductStatus(quickView)].dot
                       }`}
                   />
-                  {statusConfig[quickView.status].label}
+                  {statusConfig[getProductStatus(quickView)].label}
                 </span>
               </div>
 
@@ -1161,7 +1194,8 @@ export default function Landing() {
                 </div>
 
                 <div className="text-2xl font-bold text-foreground">
-                  {quickView.price.toLocaleString()}
+                  <span className="text-primary mr-1">đ</span>
+                  {quickView.amount.toLocaleString()}
                   <span className="text-base font-medium text-muted-foreground ml-1">
                     đ
                   </span>
@@ -1173,8 +1207,8 @@ export default function Landing() {
                     <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">
                       Stock
                     </p>
-                    <p className="text-base font-bold text-foreground">
-                      {quickView.stock} units
+                    <p className="text-sm font-semibold text-foreground">
+                      {quickView.inventory?.number || 0} units
                     </p>
                   </div>
                   <div className="bg-muted/50 rounded-xl p-3.5">
@@ -1190,11 +1224,12 @@ export default function Landing() {
                 {/* Actions */}
                 <div className="flex gap-3">
                   <button
-                    disabled={quickView.status === "out-of-stock"}
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-foreground text-background py-3.5 rounded-xl font-semibold hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                    onClick={(e) => e.stopPropagation()}
+                    disabled={getProductStatus(quickView) === "out-of-stock"}
+                    className="flex-1 cartoon-btn bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <ShoppingCart className="w-4 h-4" />
-                    {quickView.status === "out-of-stock"
+                    <ShoppingCart className="w-5 h-5" />
+                    {getProductStatus(quickView) === "out-of-stock"
                       ? "Out of Stock"
                       : "Add to Cart"}
                   </button>

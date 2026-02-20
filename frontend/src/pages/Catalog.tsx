@@ -168,7 +168,7 @@ export default function Catalog() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="py-20 text-center text-muted-foreground">
+        <div className="py-16 text-center text-muted-foreground">
           No products match your filters.
         </div>
       )}
