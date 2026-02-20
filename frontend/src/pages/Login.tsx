@@ -118,15 +118,11 @@ export default function Login({ onLogin }: LoginProps) {
             <div className="space-y-1.5 text-xs text-muted-foreground">
               <p>
                 <span className="text-primary font-medium">Admin:</span>{" "}
-                admin@store.com / admin123
+                admin@tsubame.com / admin123
               </p>
               <p>
-                <span className="text-accent font-medium">Distributor:</span>{" "}
-                distributor@store.com / dist123
-              </p>
-              <p>
-                <span className="text-success font-medium">Customer:</span>{" "}
-                customer@store.com / cust123
+                <span className="text-accent font-medium">User:</span>{" "}
+                user@tsubame.com / user123
               </p>
             </div>
           </div>
