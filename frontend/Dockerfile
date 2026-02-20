@@ -1,5 +1,9 @@
 FROM node:18 AS build
 
+# VITE_API_URL must be set at build time (Vite bakes it in)
+ARG VITE_API_URL=https://tsubame-art.econictek.com/api
+ENV VITE_API_URL=${VITE_API_URL}
+
 WORKDIR /app
 
 COPY package*.json ./

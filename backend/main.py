@@ -28,22 +28,12 @@ app = FastAPI(
     docs_url=settings.docs_url,
     redoc_url=settings.redoc_url,
 )
-default_origins = (
-    "https://www.tsubame-art.econictek.com,https://tsubame-art.econictek.com"
-)
-allowed_origins = os.getenv("CORS_ORIGINS", default_origins).split(",")
-
-# CORS configuration for development and production
-if os.getenv("ENVIRONMENT") == "production":
-    # Production: Use specific origins from environment
-    pass
-else:
-    # Development: Allow all origins
-    allowed_origins = ["*"]
+_default = "https://tsubame-art.econictek.com,https://www.tsubame-art.econictek.com,http://localhost:8082,http://localhost:3000"
+_allowed = [x.strip() for x in os.getenv("CORS_ORIGINS", _default).split(",") if x.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=_allowed,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
