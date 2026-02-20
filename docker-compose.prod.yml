@@ -19,9 +19,9 @@ services:
       - frontend
     restart: unless-stopped
     volumes:
-      - letsencrypt:/etc/letsencrypt
+      # Use host's certs (from certbot on host). Create dir if using Docker certbot: letsencrypt volume.
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - certbot_www:/var/www/certbot
 
 volumes:
-  letsencrypt:
   certbot_www:
