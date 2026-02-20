@@ -1,0 +1,27 @@
+# Prod: adds nginx (reverse proxy) + certbot. Use on server where domain points.
+# Run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Requires: port 80 (and 443) free on host. See docs/SSL-and-production.md
+
+services:
+  frontend:
+    environment:
+      # Prod: same origin via nginx
+      - VITE_API_URL=https://tsubame-art.econictek.com/api
+
+  nginx:
+    build: ./nginx
+    container_name: nginx-tsubame
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+
+volumes:
+  letsencrypt:
+  certbot_www:

@@ -1,11 +1,13 @@
+# Dev: backend + frontend + postgres only. No nginx, no port 80.
+# Run: docker compose up -d
+# Frontend: http://localhost:8082  |  API/Swagger: http://localhost:8002/api/docs
+
 services:
   backend:
     build: ./backend
     container_name: backend-tsubame
     ports:
-      - "8002:8001"  # Direct access for Swagger: http://localhost:8002/api/docs
-    expose:
-      - "8001"
+      - "8002:8001"
     env_file:
       - .env
     environment:
@@ -43,8 +45,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend-tsubame
-    expose:
-      - "8082"
     ports:
       - "8082:8082"
     depends_on:
@@ -53,31 +53,8 @@ services:
     env_file:
       - .env
     environment:
-      - VITE_API_URL=http://localhost/api
-
-  nginx:
-    build: ./nginx
-    container_name: nginx-tsubame
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - backend
-      - frontend
-    restart: unless-stopped
-    volumes:
-      - letsencrypt:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - letsencrypt:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    depends_on:
-      - nginx
+      # Dev: call API directly (no nginx)
+      - VITE_API_URL=http://localhost:8002/api
 
 volumes:
   postgres_data:
-  letsencrypt:
-  certbot_www:
