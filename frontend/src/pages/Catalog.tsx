@@ -1,6 +1,6 @@
-import { products } from "@/data/mockData";
-import { useState } from "react";
-import { Search, X, ShoppingCart, Info, Star } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, X, ShoppingCart, Info } from "lucide-react";
+import { productsAPI } from "@/lib/api";
 
 type Status = "in-stock" | "low-stock" | "out-of-stock";
 
@@ -10,7 +10,6 @@ const statusConfig: Record<Status, { label: string; className: string }> = {
   "out-of-stock": { label: "Out of Stock", className: "status-out-of-stock" },
 };
 
-const categories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
 const priceRanges = [
   { label: "All Prices", min: 0, max: Infinity },
   { label: "Under 35,000đ", min: 0, max: 35000 },
@@ -18,22 +17,54 @@ const priceRanges = [
   { label: "50,000đ+", min: 50000, max: Infinity },
 ];
 
-type Product = typeof products[0];
+type CatalogProduct = {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  description?: string;
+  image?: string;
+  inventory?: { stock: number; status: string } | null;
+};
+
+function getStatus(p: CatalogProduct): Status {
+  const stock = p.inventory?.stock ?? 0;
+  if (stock > 20) return "in-stock";
+  if (stock > 0) return "low-stock";
+  return "out-of-stock";
+}
 
 export default function Catalog() {
+  const [products, setProducts] = useState<CatalogProduct[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [priceRange, setPriceRange] = useState(0);
   const [availableOnly, setAvailableOnly] = useState(false);
-  const [quickView, setQuickView] = useState<Product | null>(null);
+  const [quickView, setQuickView] = useState<CatalogProduct | null>(null);
   const [cart, setCart] = useState<number[]>([]);
+
+  useEffect(() => {
+    productsAPI.getAll().then((data) => {
+      setProducts(data);
+      const cats = Array.from(new Set(data.map((p) => p.category)));
+      setCategories(["All", ...cats]);
+      setLoading(false);
+    }).catch(() => {
+      setProducts([]);
+      setCategories(["All"]);
+      setLoading(false);
+    });
+  }, []);
 
   const range = priceRanges[priceRange];
   const filtered = products.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (p.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.description ?? "").toLowerCase().includes(search.toLowerCase());
     const matchCat = category === "All" || p.category === category;
     const matchPrice = p.price >= range.min && p.price <= range.max;
-    const matchAvail = !availableOnly || p.status !== "out-of-stock";
+    const matchAvail = !availableOnly || getStatus(p) !== "out-of-stock";
     return matchSearch && matchCat && matchPrice && matchAvail;
   });
 
@@ -113,10 +144,14 @@ export default function Catalog() {
       </div>
 
       {/* Product Grid */}
+      {loading ? (
+        <div className="py-16 text-center text-muted-foreground">Loading products…</div>
+      ) : (
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filtered.map((product) => {
-          const { label, className } = statusConfig[product.status];
-          const outOfStock = product.status === "out-of-stock";
+          const status = getStatus(product);
+          const { label, className } = statusConfig[status];
+          const outOfStock = status === "out-of-stock";
           return (
             <div
               key={product.id}
@@ -166,8 +201,9 @@ export default function Catalog() {
           );
         })}
       </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!loading && filtered.length === 0 && (
         <div className="py-16 text-center text-muted-foreground">
           No products match your filters.
         </div>
@@ -208,30 +244,22 @@ export default function Catalog() {
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="rounded-lg bg-muted p-2.5">
                   <p className="text-muted-foreground">Stock</p>
-                  <p className="font-semibold text-foreground">{quickView.stock} units</p>
-                </div>
-                <div className="rounded-lg bg-muted p-2.5">
-                  <p className="text-muted-foreground">Distributor</p>
-                  <p className="font-semibold text-foreground">{quickView.distributor}</p>
-                </div>
-                <div className="rounded-lg bg-muted p-2.5">
-                  <p className="text-muted-foreground">Batch #</p>
-                  <p className="font-semibold text-foreground font-mono">{quickView.batchNumber}</p>
+                  <p className="font-semibold text-foreground">{quickView.inventory?.stock ?? 0} units</p>
                 </div>
                 <div className="rounded-lg bg-muted p-2.5">
                   <p className="text-muted-foreground">Status</p>
-                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusConfig[quickView.status].className}`}>
-                    {statusConfig[quickView.status].label}
+                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${statusConfig[getStatus(quickView)].className}`}>
+                    {statusConfig[getStatus(quickView)].label}
                   </span>
                 </div>
               </div>
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={() => { addToCart(quickView.id); setQuickView(null); }}
-                  disabled={quickView.status === "out-of-stock"}
+                  disabled={getStatus(quickView) === "out-of-stock"}
                   className="flex-1 rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors glow-primary"
                 >
-                  {quickView.status === "out-of-stock" ? "Out of Stock" : "Add to Cart"}
+                  {getStatus(quickView) === "out-of-stock" ? "Out of Stock" : "Add to Cart"}
                 </button>
                 <button className="rounded-xl border border-border bg-muted px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Request Info
