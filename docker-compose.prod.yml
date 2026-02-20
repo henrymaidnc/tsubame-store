@@ -32,7 +32,9 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://tsubame-art.econictek.com/api
     container_name: frontend-tsubame-prod
     environment:
       # Prod: same origin via nginx
