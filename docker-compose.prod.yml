@@ -7,7 +7,7 @@ services:
     build: ./backend
     container_name: backend-tsubame-prod
     env_file:
-      - .env.production
+      - .env
     restart: unless-stopped
     depends_on:
       postgres:
