@@ -15,25 +15,31 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Login credentials created by this script (use for /api/auth/login)
+SEED_USERS = [
+    {"email": "admin@tsubame.com", "password": "admin123", "role": "admin"},
+    {"email": "user@tsubame.com", "password": "user123", "role": "user"},
+]
+
 
 def init_db():
     db = SessionLocal()
     try:
-        # Create admin user
-        admin_user = User(
-            email="admin@tsubame.com",
-            hashed_password=pwd_context.hash("admin123"),
-            role="admin"
-        )
-        db.add(admin_user)
+        # Create seed users (skip if already exist so safe to re-run)
+        for u in SEED_USERS:
+            if db.query(User).filter(User.email == u["email"]).first() is None:
+                db.add(User(
+                    email=u["email"],
+                    hashed_password=pwd_context.hash(u["password"]),
+                    role=u["role"],
+                ))
+        db.commit()
 
-        # Create regular user
-        regular_user = User(
-            email="user@tsubame.com",
-            hashed_password=pwd_context.hash("user123"),
-            role="user"
-        )
-        db.add(regular_user)
+        # If DB already has seed data, skip the rest (safe to re-run)
+        if db.query(Material).first() is not None:
+            print("Database already has seed data. Users ensured.")
+            print("Login: admin@tsubame.com / admin123  or  user@tsubame.com / user123")
+            return
 
         # Create sample Materials
         materials = [
