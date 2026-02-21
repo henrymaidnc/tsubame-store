@@ -964,14 +964,14 @@ export default function Landing() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                             {/* Status badge */}
-                            <span
+                            {/* <span
                               className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${badge}`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${dot}`}
                               />
                               {label}
-                            </span>
+                            </span> */}
 
                             {/* Action buttons */}
                             <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
@@ -1010,7 +1010,7 @@ export default function Landing() {
                                   đ
                                 </span>
                               </span>
-                              <button
+                              {/* <button
                                 disabled={outOfStock}
                                 className={`p-2 rounded-xl transition-all duration-200 ${outOfStock
                                   ? "bg-muted text-muted-foreground cursor-not-allowed"
@@ -1019,7 +1019,7 @@ export default function Landing() {
                                 title={outOfStock ? "Sold Out" : "Add to Cart"}
                               >
                                 <ShoppingCart className="w-4 h-4" />
-                              </button>
+                              </button> */}
                             </div>
                           </div>
                         </div>
@@ -1371,7 +1371,7 @@ export default function Landing() {
                 {[
                   { icon: Mail, text: "info@tsubame-store.com" },
                   { icon: Phone, text: "+84 123 456 789" },
-                  { icon: MapPin, text: "Hanoi, Vietnam" },
+                  { icon: MapPin, text: "Ho Chi Minh, Vietnam" },
                 ].map((item) => (
                   <li
                     key={item.text}
