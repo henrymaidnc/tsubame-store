@@ -15,6 +15,28 @@ export default function About() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <section className="max-w-4xl mx-auto px-6 py-16">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How fast is shipping?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Orders typically ship within 2–5 days nationwide via trusted carriers."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What makes Tsubame Art special?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every piece is handcrafted with high-quality materials and inspected before shipping."
+              }
+            }
+          ]
+        })}} />
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
             <ShoppingBag className="w-5 h-5 text-primary-foreground" />
