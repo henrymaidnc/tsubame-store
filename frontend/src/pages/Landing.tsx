@@ -1293,15 +1293,22 @@ export default function Landing() {
                 Where magic meets craftsmanship in every fox-themed creation.
               </p>
               <div className="flex gap-3">
-                {[Instagram, Facebook].map((Icon, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
+                <a
+                  href="https://www.instagram.com/tsubame.arts/?hl=en"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://shopee.vn/tsubame.arts"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
               </div>
             </div>
 
@@ -1311,16 +1318,21 @@ export default function Landing() {
                 Quick Links
               </h4>
               <ul className="space-y-2.5">
-                {["Products", "About", "Contact"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href={`#${item.toLowerCase()}`}
-                      className="text-sm text-white/50 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
+                <li>
+                  <a href="#products" className="text-sm text-white/50 hover:text-white transition-colors">
+                    Products
+                  </a>
+                </li>
+                <li>
+                  <a href="/about" className="text-sm text-white/50 hover:text-white transition-colors">
+                    About
+                  </a>
+                </li>
+                <li>
+                  <a href="/contact" className="text-sm text-white/50 hover:text-white transition-colors">
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
 

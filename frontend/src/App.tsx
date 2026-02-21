@@ -7,6 +7,8 @@ import { useState } from "react";
 import AppLayout from "./components/AppLayout";
 import Login from "./pages/Login";
 import Landing from "./pages/Landing";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import Revenue from "./pages/Revenue";
 import Dashboard from "./pages/Dashboard";
 import Catalog from "./pages/Catalog";
@@ -30,6 +32,8 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             {!role ? (
               <Route path="/admin" element={<Navigate to="/login" replace />} />
