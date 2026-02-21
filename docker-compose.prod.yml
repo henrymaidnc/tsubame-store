@@ -1,11 +1,13 @@
-# Prod: adds nginx (reverse proxy) + certbot. Use on server where domain points.
+# Prod: backend + frontend only. nginx is handled by the shared nginx-proxy
+# (see /srv/nginx-proxy on the server). No ports 80/443 here.
 # Run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-# Requires: port 80 (and 443) free on host. See docs/SSL-and-production.md
 
 services:
   backend:
     build: ./backend
     container_name: backend-tsubame-prod
+    ports:
+      - "8002:8002"
     env_file:
       - .env.production
     restart: unless-stopped
@@ -36,28 +38,13 @@ services:
       args:
         VITE_API_URL: https://tsubame-art.econictek.com/api
     container_name: frontend-tsubame-prod
+    ports:
+      - "8082:8082"
     environment:
-      # Prod: same origin via nginx
       - VITE_API_URL=https://tsubame-art.econictek.com/api
     depends_on:
       - backend
     restart: unless-stopped
 
-  nginx:
-    build: ./nginx
-    container_name: nginx-tsubame
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - backend
-      - frontend
-    restart: unless-stopped
-    volumes:
-      # Use host's certs (from certbot on host). Create dir if using Docker certbot: letsencrypt volume.
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - certbot_www:/var/www/certbot
-
 volumes:
   postgres_data:
-  certbot_www:
