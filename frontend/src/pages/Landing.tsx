@@ -239,6 +239,23 @@ export default function Landing() {
   const [theme, setTheme] = useState<LandingTheme>("default");
   const [showThemePicker, setShowThemePicker] = useState(false);
 
+  useEffect(() => {
+    const title = "Tsubame Art — Shop Art Prints, Posters & Gifts";
+    const description =
+      "Discover curated art prints, posters, and gifts from Tsubame Art. Shop quality designs with fast shipping and secure checkout.";
+    document.title = title;
+    const metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (metaDesc) metaDesc.setAttribute("content", description);
+    const setMeta = (selector: string, attr: "content" | "href", value: string) => {
+      const el = document.querySelector(selector) as HTMLElement | null;
+      if (el) el.setAttribute(attr, value);
+    };
+    setMeta('meta[property="og:title"]', "content", title);
+    setMeta('meta[property="og:description"]', "content", description);
+    setMeta('meta[name="twitter:title"]', "content", title);
+    setMeta('meta[name="twitter:description"]', "content", description);
+  }, []);
+
 
 
   useEffect(() => {
