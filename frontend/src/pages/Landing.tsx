@@ -364,7 +364,7 @@ export default function Landing() {
                 <ShoppingBag className="w-[18px] h-[18px] text-primary-foreground" />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-foreground">
-                TsubameArt<span className="text-primary">Store</span>
+                TsubameArts<span className="text-primary">Store</span>
               </span>
             </motion.div>
 
@@ -522,6 +522,14 @@ export default function Landing() {
       <section className="relative overflow-hidden">
         {/* Floating fox decorations */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+          {/* Background image */}
+          <img
+            src="/background.jpg"
+            alt="Tsubame Arts hero background"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#c7ecf1_0%,white_85%)]" />
           <motion.span
             animate={{ y: [0, -18, 0], rotate: [-5, 5, -5] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -551,6 +559,8 @@ export default function Landing() {
           <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-accent/5 blur-3xl" />
         </div>
 
+        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24 md:pb-20">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
@@ -564,30 +574,7 @@ export default function Landing() {
               </span>
             </motion.div>
 
-            <motion.h2
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              custom={1}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6"
-            >
-              Meet Your New
-              <br />
-              <span className="gradient-text italic">Foxy Friends</span>
-              {" "}🦊✨
-            </motion.h2>
-
-            <motion.p
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              custom={2}
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-xl mx-auto"
-            >
-              Super cute stickers, charms & figurines — all handmade by one very dedicated fox lover 🐾
-              <br />
-              <span className="font-bold text-foreground">Kawaii guaranteed!</span>
-            </motion.p>
+            {/* hero text intentionally removed */}
 
             <motion.div
               initial="hidden"
@@ -606,15 +593,7 @@ export default function Landing() {
                 🛍️ Shop Now!
                 <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
               </motion.a>
-              <motion.a
-                href="#about"
-                whileHover={{ scale: 1.06, rotate: 1 }}
-                whileTap={{ scale: 0.94 }}
-                transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                className="cartoon-btn inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-base bg-background"
-              >
-                🌸 Learn More
-              </motion.a>
+              
             </motion.div>
 
             {/* Stats row */}
@@ -644,10 +623,22 @@ export default function Landing() {
         </div>
       </section>
 
+      <section className="px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-xl rounded-2xl bg-muted/30 border border-border/40 px-6 py-5">
+            <p className="text-left text-sm md:text-base text-muted-foreground">
+            🔋✨ Let me recharge you with cute little things ✨🔋
+            <br />
+            Xin chào các cậu đến với chiếc shop nhỏ Tsubame.arts - nơi bán các sản phẩm cute do tớ tự thiết kế 😊🐥
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ════════════════════════════════════════════════════ */}
       {/* TRUST BADGES                                         */}
       {/* ════════════════════════════════════════════════════ */}
-      <section className="border-y border-border/50 bg-muted/30">
+      {/* <section className="border-y border-border/50 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
@@ -682,7 +673,7 @@ export default function Landing() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ════════════════════════════════════════════════════ */}
       {/* WHY CHOOSE US                                        */}
@@ -1004,12 +995,6 @@ export default function Landing() {
                               {product.name}
                             </h3>
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-base font-bold text-foreground">
-                                {product.price.toLocaleString()}
-                                <span className="text-xs font-medium text-muted-foreground ml-0.5">
-                                  đ
-                                </span>
-                              </span>
                               {/* <button
                                 disabled={outOfStock}
                                 className={`p-2 rounded-xl transition-all duration-200 ${outOfStock
@@ -1221,13 +1206,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="text-2xl font-bold text-foreground">
-                  <span className="text-primary mr-1">đ</span>
-                  {quickView.price.toLocaleString()}
-                  <span className="text-base font-medium text-muted-foreground ml-1">
-                    đ
-                  </span>
-                </div>
+                
 
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-3">
