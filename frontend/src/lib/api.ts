@@ -1,23 +1,35 @@
 import axios from 'axios';
 
 function getApiBaseUrl(): string {
+  const env = import.meta.env.VITE_API_URL as string | undefined;
   if (typeof window !== 'undefined') {
-    if (window.location.protocol === 'https:') {
-      return `${window.location.origin}/api`;
+    const origin = window.location.origin;
+    const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    if (isLocal) {
+      if (!env || /tsubame-arts\.econictek\.com/i.test(env)) {
+        return 'http://localhost:8002/api';
+      }
+      return env.replace(/\/$/, '');
     }
-    const env = import.meta.env.VITE_API_URL;
-    return (env || 'http://localhost:8002/api').replace(/\/$/, '');
+    if (env && env.trim()) {
+      return env.replace(/\/$/, '');
+    }
+    if (window.location.protocol === 'https:') {
+      return `${origin}/api`;
+    }
   }
-  return import.meta.env.VITE_API_URL || 'http://localhost:8002/api';
+  return (env || 'http://localhost:8002/api').replace(/\/$/, '');
 }
 
 const API_BASE_URL = getApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: false,
   headers: {
-    'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
+  timeout: 15000,
 });
 
 // Add auth token to requests
@@ -110,7 +122,7 @@ export const authAPI = {
 export const productsAPI = {
   getAll: async (): Promise<Product[]> => {
     try {
-      const response = await api.get('/products');
+      const response = await api.get('/products/');
       const data = response.data;
       return Array.isArray(data) ? data : [];
     } catch {
@@ -124,14 +136,14 @@ export const productsAPI = {
   },
   
   create: async (payload: Partial<Product>) => {
-    const response = await api.post('/products', payload);
+    const response = await api.post('/products/', payload);
     return response.data;
   },
 };
 
 export const materialsAPI = {
   create: async (payload: Partial<Material>) => {
-    const response = await api.post('/materials', payload);
+    const response = await api.post('/materials/', payload);
     return response.data;
   },
 };

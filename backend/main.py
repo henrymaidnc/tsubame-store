@@ -28,15 +28,21 @@ app = FastAPI(
     docs_url=settings.docs_url,
     redoc_url=settings.redoc_url,
 )
-_default = "https://tsubame-arts.econictek.com,https://www.tsubame-arts.econictek.com,http://localhost:8082,http://localhost:3000"
+_default = (
+    "https://tsubame-arts.econictek.com,"
+    "https://www.tsubame-arts.econictek.com,"
+    "http://localhost:8082,http://127.0.0.1:8082,"
+)
 _allowed = [x.strip() for x in os.getenv("CORS_ORIGINS", _default).split(",") if x.strip()]
+_origin_regex = os.getenv("CORS_ORIGIN_REGEX", r"https?://(localhost|127\.0\.0\.1)(:\d+)?$")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex=_origin_regex,
 )
 
 # API v1 routers under /api

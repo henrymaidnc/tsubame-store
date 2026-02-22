@@ -19,7 +19,7 @@ const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin/products", label: "Products", icon: ShoppingBag },
   { to: "/admin/materials", label: "Materials", icon: Package },
-  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  // { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/distributors", label: "Distributors", icon: Truck },
 ];
 

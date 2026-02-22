@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useInView } from "framer-motion";
+import { productsAPI } from "@/lib/api";
 
 /* ─── Types ─────────────────────────────────────────────── */
 type Status = "in-stock" | "low-stock" | "out-of-stock";
@@ -240,9 +241,9 @@ export default function Landing() {
   const [showThemePicker, setShowThemePicker] = useState(false);
 
   useEffect(() => {
-    const title = "Tsubame Art — Shop Art Prints, Posters & Gifts";
+    const title = "Tsubame Arts";
     const description =
-      "Discover curated art prints, posters, and gifts from Tsubame Art. Shop quality designs with fast shipping and secure checkout.";
+      "🔋✨ Let me recharge you with cute little things ✨🔋";
     document.title = title;
     const metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (metaDesc) metaDesc.setAttribute("content", description);
@@ -259,17 +260,9 @@ export default function Landing() {
 
 
   useEffect(() => {
-    const url =
-      typeof window !== "undefined" && window.location.protocol === "https:"
-        ? "/api/products/"
-        : `${(import.meta.env.VITE_API_URL || "http://localhost:8002/api").replace(/\/$/, "")}/products/`;
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) return [];
-        return res.json();
-      })
-      .then((data) => {
-        const list = Array.isArray(data) ? data : [];
+    productsAPI
+      .getAll()
+      .then((list) => {
         setProducts(list);
         const cats = Array.from(new Set(list.map((p: Product) => p.category))) as string[];
         setCategories(["All", ...cats]);
@@ -364,7 +357,7 @@ export default function Landing() {
                 <ShoppingBag className="w-[18px] h-[18px] text-primary-foreground" />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-foreground">
-                TsubameArts<span className="text-primary">Store</span>
+                TsubameArt<span className="text-primary">Store</span>
               </span>
             </motion.div>
 
@@ -519,25 +512,23 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* HERO                                                 */}
       {/* ════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden h-[160px] sm:h-[320px] md:h-[360px] lg:h-[400px] xl:h-[600px]">
         {/* Floating fox decorations */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-          {/* Background: image on top of gradient (no opacity on image) */}
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "url('/background.jpg'), linear-gradient(to bottom, #c7ecf1 0%, white 85%)",
-              backgroundSize: "cover, cover",
-              backgroundPosition: "center, top center",
-              backgroundRepeat: "no-repeat, no-repeat",
-            }}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#c7ecf1_0%,white_85%)]" />
+          <img
+            src="/background.jpg"
+            alt="Tsubame Arts hero background"
+            className="absolute inset-0 h-full w-full object-contain md:object-cover"
+            style={{ objectPosition: 'center top' }}
           />
-          <motion.span
+          <motion.img
+            src="/tsubame.png"
+            alt="Mascot"
             animate={{ y: [0, -18, 0], rotate: [-5, 5, -5] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-16 left-[8%] text-4xl md:text-5xl opacity-50"
-          >🦊</motion.span>
+            className="absolute top-16 left-[8%] w-12 h-12 md:w-16 md:h-16 opacity-50"
+          />
           <motion.span
             animate={{ y: [0, 14, 0], rotate: [5, -5, 5] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
@@ -553,20 +544,20 @@ export default function Landing() {
             transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
             className="absolute top-1/3 right-[5%] text-2xl md:text-3xl opacity-30"
           >⭐</motion.span>
-          <motion.span
-            animate={{ y: [0, -10, 0], rotate: [-8, 8, -8] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
-            className="absolute bottom-24 right-[18%] text-3xl opacity-35"
-          >🦊</motion.span>
+          <motion.img
+            src="/tsubame.png"
+            alt="Mascot"
+            animate={{ y: [0, -18, 0], rotate: [-5, 5, -5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-16 left-[8%] w-12 h-12 md:w-16 md:h-16 opacity-50"
+          />
           <div className="absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-primary/5 blur-3xl" />
           <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-accent/5 blur-3xl" />
         </div>
 
-        
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24 md:pt-40 md:pb-20">
+        <div className="relative max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 flex items-center justify-center">
           <div className="max-w-3xl mx-auto text-center">
-            <motion.div
+            {/* <motion.div
               initial="hidden"
               animate="visible"
               variants={fadeUp}
@@ -575,9 +566,32 @@ export default function Landing() {
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wide mb-6 border border-primary/20">
                 🎨 Handcrafted with love in Vietnam 🌸
               </span>
-            </motion.div>
+            </motion.div> */}
 
-            {/* hero text intentionally removed */}
+            {/* <motion.h2
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              custom={1}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6"
+            >
+              Meet Your New
+              <br />
+              <span className="gradient-text italic">Foxy Friends</span>
+              {" "}🦊✨
+            </motion.h2>
+
+            <motion.p
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              custom={2}
+              className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-10 max-w-xl mx-auto"
+            >
+              Super cute stickers, charms & figurines — all handmade by one very dedicated fox lover 🐾
+              <br />
+              <span className="font-bold text-foreground">Kawaii guaranteed!</span>
+            </motion.p> */}
 
             <motion.div
               initial="hidden"
@@ -596,11 +610,19 @@ export default function Landing() {
                 🛍️ Shop Now!
                 <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
               </motion.a>
-              
+              {/* <motion.a
+                href="#about"
+                whileHover={{ scale: 1.06, rotate: 1 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                className="cartoon-btn inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-base bg-background"
+              >
+                🌸 Learn More
+              </motion.a> */}
             </motion.div>
 
             {/* Stats row */}
-            <motion.div
+            {/* <motion.div
               initial="hidden"
               animate="visible"
               variants={fadeUp}
@@ -621,18 +643,18 @@ export default function Landing() {
                   </p>
                 </div>
               ))}
-            </motion.div>
+            </motion.div> */}
           </div>
         </div>
       </section>
 
-      <section className="px-4 sm:px-6 lg:px-8 py-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-xl rounded-2xl bg-muted/30 border border-border/40 px-6 py-5">
-            <p className="text-left text-sm md:text-base text-muted-foreground">
-            🔋✨ Let me recharge you with cute little things ✨🔋
-            <br />
-            Xin chào các cậu đến với chiếc shop nhỏ Tsubame.arts - nơi bán các sản phẩm cute do tớ tự thiết kế 😊🐥
+      <section className="px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-center">
+          <div className="max-w-2xl rounded-2xl bg-muted/30 border border-border/40 px-6 py-5">
+            <p className="text-center text-sm md:text-base text-muted-foreground">
+              🔋✨ Let me recharge you with cute little things ✨🔋
+              <br />
+              Xin chào các cậu đến với chiếc shop nhỏ Tsubame.arts - nơi bán các sản phẩm cute do tớ tự thiết kế 😊🐥
             </p>
           </div>
         </div>
@@ -684,7 +706,7 @@ export default function Landing() {
       <section id="about" className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
-            eyebrow="Why TsubameArt"
+            eyebrow="Why TsubameArts"
             title="Crafted With Passion"
             subtitle="Every product is designed and made by hand with attention to the smallest details."
           />
@@ -958,14 +980,14 @@ export default function Landing() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                             {/* Status badge */}
-                            {/* <span
+                            <span
                               className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${badge}`}
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${dot}`}
                               />
                               {label}
-                            </span> */}
+                            </span>
 
                             {/* Action buttons */}
                             <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
@@ -998,7 +1020,13 @@ export default function Landing() {
                               {product.name}
                             </h3>
                             <div className="flex items-center justify-between gap-2">
-                              {/* <button
+                              <span className="text-base font-bold text-foreground">
+                                {product.price.toLocaleString()}
+                                <span className="text-xs font-medium text-muted-foreground ml-0.5">
+                                  đ
+                                </span>
+                              </span>
+                              <button
                                 disabled={outOfStock}
                                 className={`p-2 rounded-xl transition-all duration-200 ${outOfStock
                                   ? "bg-muted text-muted-foreground cursor-not-allowed"
@@ -1007,7 +1035,7 @@ export default function Landing() {
                                 title={outOfStock ? "Sold Out" : "Add to Cart"}
                               >
                                 <ShoppingCart className="w-4 h-4" />
-                              </button> */}
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -1209,7 +1237,13 @@ export default function Landing() {
                   </p>
                 </div>
 
-                
+                <div className="text-2xl font-bold text-foreground">
+                  <span className="text-primary mr-1">đ</span>
+                  {quickView.price.toLocaleString()}
+                  <span className="text-base font-medium text-muted-foreground ml-1">
+                    đ
+                  </span>
+                </div>
 
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-3">
@@ -1275,22 +1309,20 @@ export default function Landing() {
                 Where magic meets craftsmanship in every fox-themed creation.
               </p>
               <div className="flex gap-3">
-                <a
-                  href="https://www.instagram.com/tsubame.arts/?hl=en"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-                >
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://shopee.vn/tsubame.arts"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+                {[
+                  { Icon: Instagram, href: "https://www.instagram.com/tsubame.arts/?hl=en" },
+                  { Icon: Facebook, href: "https://www.facebook.com/profile.php?id=61562372116408" },
+                ].map(({ Icon, href }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
               </div>
             </div>
 
@@ -1300,21 +1332,16 @@ export default function Landing() {
                 Quick Links
               </h4>
               <ul className="space-y-2.5">
-                <li>
-                  <a href="#products" className="text-sm text-white/50 hover:text-white transition-colors">
-                    Products
-                  </a>
-                </li>
-                <li>
-                  <a href="#about" className="text-sm text-white/50 hover:text-white transition-colors">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact" className="text-sm text-white/50 hover:text-white transition-colors">
-                    Contact
-                  </a>
-                </li>
+                {["Products", "About", "Contact"].map((item) => (
+                  <li key={item}>
+                    <a
+                      href={`#${item.toLowerCase()}`}
+                      className="text-sm text-white/50 hover:text-white transition-colors"
+                    >
+                      {item}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -1351,7 +1378,7 @@ export default function Landing() {
               </h4>
               <ul className="space-y-2.5">
                 {[
-                  { icon: Mail, text: "info@tsubame-store.com" },
+                  { icon: Mail, text: "info@tsubame-arts.com" },
                   { icon: Phone, text: "+84 123 456 789" },
                   { icon: MapPin, text: "Ho Chi Minh, Vietnam" },
                 ].map((item) => (
