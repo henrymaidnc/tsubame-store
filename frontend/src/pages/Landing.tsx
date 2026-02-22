@@ -522,14 +522,17 @@ export default function Landing() {
       <section className="relative overflow-hidden">
         {/* Floating fox decorations */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-          {/* Background image */}
-          <img
-            src="/background.jpg"
-            alt="Tsubame Arts hero background"
-            className="absolute inset-0 h-full w-full object-cover"
+          {/* Background: image on top of gradient (no opacity on image) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "url('/background.jpg'), linear-gradient(to bottom, #c7ecf1 0%, white 85%)",
+              backgroundSize: "cover, cover",
+              backgroundPosition: "center, top center",
+              backgroundRepeat: "no-repeat, no-repeat",
+            }}
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#c7ecf1_0%,white_85%)]" />
           <motion.span
             animate={{ y: [0, -18, 0], rotate: [-5, 5, -5] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -561,7 +564,7 @@ export default function Landing() {
 
         
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 md:pt-24 md:pb-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24 md:pt-40 md:pb-20">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial="hidden"
@@ -1303,12 +1306,12 @@ export default function Landing() {
                   </a>
                 </li>
                 <li>
-                  <a href="/about" className="text-sm text-white/50 hover:text-white transition-colors">
+                  <a href="#about" className="text-sm text-white/50 hover:text-white transition-colors">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="/contact" className="text-sm text-white/50 hover:text-white transition-colors">
+                  <a href="#contact" className="text-sm text-white/50 hover:text-white transition-colors">
                     Contact
                   </a>
                 </li>
