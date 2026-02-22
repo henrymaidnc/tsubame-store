@@ -48,6 +48,7 @@ export interface Product {
   image: string;
   price: number;
   description: string;
+  shopee_link?: string | null;
   inventory?: Inventory | null;
 }
 
@@ -710,7 +711,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* WHY CHOOSE US                                        */}
       {/* ════════════════════════════════════════════════════ */}
-      <section id="about" className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="about" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             eyebrow="Why TsubameArts"
@@ -759,7 +760,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       <section
         id="products"
-        className="py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20"
+        className="py-8 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20"
       >
         <div className="max-w-7xl mx-auto">
           <SectionHeading
@@ -977,11 +978,21 @@ export default function Landing() {
                         <div className="cartoon-card bg-background rounded-2xl overflow-hidden">
                           {/* Image */}
                           <div className="relative aspect-square overflow-hidden bg-muted/40">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
+                            {product.shopee_link ? (
+                              <a href={product.shopee_link} target="_blank" rel="noreferrer" title="Shop on Shopee">
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                              </a>
+                            ) : (
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            )}
 
                             {/* Hover overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -1027,12 +1038,12 @@ export default function Landing() {
                               {product.name}
                             </h3>
                             <div className="flex items-center justify-between gap-2">
-                              <span className="text-base font-bold text-foreground">
+                              {/* <span className="text-base font-bold text-foreground">
                                 {product.price.toLocaleString()}
                                 <span className="text-xs font-medium text-muted-foreground ml-0.5">
                                   đ
                                 </span>
-                              </span>
+                              </span> */}
                               <button
                                 disabled={outOfStock}
                                 className={`p-2 rounded-xl transition-all duration-200 ${outOfStock
@@ -1062,11 +1073,21 @@ export default function Landing() {
                     >
                       <div className="flex gap-4 sm:gap-5">
                         <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-xl overflow-hidden bg-muted/40">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                          {product.shopee_link ? (
+                            <a href={product.shopee_link} target="_blank" rel="noreferrer" title="Shop on Shopee">
+                              <img
+                                src={product.image}
+                                alt={product.name}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            </a>
+                          ) : (
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
@@ -1141,7 +1162,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* NEWSLETTER / CTA                                     */}
       {/* ════════════════════════════════════════════════════ */}
-      <section id="contact" className="py-16 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="relative bg-foreground rounded-3xl overflow-hidden">
             {/* Decorative */}
@@ -1267,6 +1288,19 @@ export default function Landing() {
 
                 {/* Actions */}
                 <div className="flex gap-3">
+                  {quickView.shopee_link && (
+                    <a
+                      href={quickView.shopee_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 cartoon-btn bg-foreground text-background hover:bg-foreground/90 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold transition-all"
+                      onClick={(e) => e.stopPropagation()}
+                      title="Buy on Shopee"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                      Buy on Shopee
+                    </a>
+                  )}
                   <button
                     onClick={(e) => e.stopPropagation()}
                     disabled={getProductStatus(quickView) === "out-of-stock"}

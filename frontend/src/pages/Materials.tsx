@@ -63,8 +63,8 @@ export default function Materials() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
-          <div className="bg-background rounded-xl w-full max-w-lg border border-border" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setOpen(false)}>
+          <div className="bg-background rounded-xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
             <div className="p-5 border-b border-border text-base font-semibold">Add Material</div>
             <div className="p-5 space-y-3">
               <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />

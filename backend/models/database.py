@@ -54,6 +54,7 @@ class Product(Base):
     price = Column(Float)
     cost = Column(Float)
     image = Column(String)
+    shopee_link = Column(String)
 
     product_materials = relationship("ProductMaterial", back_populates="product")
     inventory = relationship("Inventory", back_populates="product", uselist=False)

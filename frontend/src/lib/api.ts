@@ -71,6 +71,7 @@ export interface Product {
   batch_number: string;
   description: string;
   image: string;
+  shopee_link?: string;
 }
 export interface Material {
   id: number;

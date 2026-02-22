@@ -76,6 +76,7 @@ class ProductBase(BaseModel):
     price: float
     cost: float
     image: str
+    shopee_link: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -102,6 +103,7 @@ class ProductCreate(BaseModel):
     price: float
     cost: float
     image: str
+    shopee_link: Optional[str] = None
 
 
 class ProductUpdate(BaseModel):
@@ -111,6 +113,7 @@ class ProductUpdate(BaseModel):
     price: Optional[float] = None
     cost: Optional[float] = None
     image: Optional[str] = None
+    shopee_link: Optional[str] = None
 
 
 # Distributor schemas

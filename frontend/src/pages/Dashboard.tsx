@@ -60,65 +60,6 @@ export default function Dashboard() {
         <p className="text-sm text-muted-foreground">Distributor performance timeline</p>
       </div>
 
-      {/* Top Distributors Bar Chart */}
-      <div className="card-glass rounded-xl p-5">
-        <h2 className="text-base font-semibold text-foreground mb-4">Top Distributors by Total Sales</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis
-              dataKey="distributor"
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              angle={-45}
-              textAnchor="end"
-              height={100}
-            />
-            <YAxis
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
-            />
-            <Tooltip
-              contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
-              formatter={(value: any) => [`${value.toLocaleString()}`, "Total Sales"]}
-              labelStyle={{ color: "hsl(var(--card-foreground))" }}
-            />
-            <Bar dataKey="total" radius={[6, 6, 0, 0]} fill="hsl(var(--primary))" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Monthly Sales Trend */}
-      <div className="card-glass rounded-xl p-5">
-        <h2 className="text-base font-semibold text-foreground mb-4">Monthly Sales Trend</h2>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={trendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis
-              dataKey="month"
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              interval={2}
-            />
-            <YAxis
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
-            />
-            <Tooltip
-              contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
-              formatter={(value: any) => `${value.toLocaleString()}`}
-              labelStyle={{ color: "hsl(var(--card-foreground))" }}
-            />
-            <Line
-              type="monotone"
-              dataKey="total"
-              stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
       {/* Distributor Timeline Heatmap Table */}
       <div className="card-glass rounded-xl overflow-hidden">
         <div className="p-5 border-b border-border">
@@ -207,6 +148,66 @@ export default function Dashboard() {
           Note: Values are in thousands (k). Cells are color-coded by percentage of highest value in each month.
         </div>
       </div>
+
+      {/* Top Distributors Bar Chart */}
+      <div className="card-glass rounded-xl p-5">
+        <h2 className="text-base font-semibold text-foreground mb-4">Top Distributors by Total Sales</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis
+              dataKey="distributor"
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              angle={-45}
+              textAnchor="end"
+              height={100}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+            />
+            <Tooltip
+              contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
+              formatter={(value: any) => [`${value.toLocaleString()}`, "Total Sales"]}
+              labelStyle={{ color: "hsl(var(--card-foreground))" }}
+            />
+            <Bar dataKey="total" radius={[6, 6, 0, 0]} fill="hsl(var(--primary))" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Monthly Sales Trend */}
+      <div className="card-glass rounded-xl p-5">
+        <h2 className="text-base font-semibold text-foreground mb-4">Monthly Sales Trend</h2>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={trendData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              interval={2}
+            />
+            <YAxis
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+            />
+            <Tooltip
+              contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
+              formatter={(value: any) => `${value.toLocaleString()}`}
+              labelStyle={{ color: "hsl(var(--card-foreground))" }}
+            />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="hsl(var(--primary))"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
     </div>
   );
 }

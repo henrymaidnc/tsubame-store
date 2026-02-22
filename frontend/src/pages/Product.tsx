@@ -25,6 +25,7 @@ type CatalogProduct = {
   price: number;
   description?: string;
   image?: string;
+  shopee_link?: string;
   inventory?: { stock: number; status: string } | null;
 };
 
@@ -77,7 +78,7 @@ export default function Product() {
   const { toast } = useToast();
   const [addOpen, setAddOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [newProduct, setNewProduct] = useState({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "" });
+  const [newProduct, setNewProduct] = useState({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "", shopee_link: "" });
 
   const saveProduct = async () => {
     try {
@@ -90,12 +91,13 @@ export default function Product() {
         distributor: newProduct.distributor,
         image: newProduct.image,
         description: newProduct.description,
+        shopee_link: newProduct.shopee_link || undefined,
         status: "in-stock",
         batch_number: "",
       } as any);
       toast({ title: "Product added" });
       setAddOpen(false);
-      setNewProduct({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "" });
+      setNewProduct({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "", shopee_link: "" });
       const data = await productsAPI.getAll();
       setProducts(data);
     } catch (e: any) {
@@ -191,8 +193,8 @@ export default function Product() {
       )}
 
       {addOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setAddOpen(false)}>
-          <div className="bg-background rounded-xl w-full max-w-lg border border-border" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setAddOpen(false)}>
+          <div className="bg-background rounded-xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
             <div className="p-5 border-b border-border text-base font-semibold">Add Product</div>
             <div className="p-5 space-y-3">
               <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Name" value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} />
@@ -203,6 +205,7 @@ export default function Product() {
               </div>
               <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Distributor" value={newProduct.distributor} onChange={(e) => setNewProduct({ ...newProduct, distributor: e.target.value })} />
               <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Image URL" value={newProduct.image} onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })} />
+          <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Shopee Link (optional)" value={newProduct.shopee_link} onChange={(e) => setNewProduct({ ...newProduct, shopee_link: e.target.value })} />
               <textarea className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" rows={3} placeholder="Description" value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
             </div>
             <div className="p-5 border-t border-border flex gap-2 justify-end">
