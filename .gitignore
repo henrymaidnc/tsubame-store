@@ -4,3 +4,5 @@ node_modules
 
 
 *.pyc
+frontend/dist
+frontend/.vite
