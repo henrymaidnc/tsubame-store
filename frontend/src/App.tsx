@@ -9,7 +9,8 @@ import Login from "./pages/Login";
 import Landing from "./pages/Landing";
 import Revenue from "./pages/Revenue";
 import Dashboard from "./pages/Dashboard";
-import Catalog from "./pages/Catalog";
+import Product from "./pages/Product";
+import Materials from "./pages/Materials";
 import Analytics from "./pages/Analytics";
 import Distributors from "./pages/Distributors";
 import NotFound from "./pages/NotFound";
@@ -38,7 +39,8 @@ export default function App() {
                 <Route path="/admin" element={<Navigate to="/admin/revenue" replace />} />
                 <Route path="/admin/revenue" element={<Revenue />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="/admin/catalog" element={<Catalog />} />
+                <Route path="/admin/products" element={<Product />} />
+                <Route path="/admin/materials" element={<Materials />} />
                 <Route path="/admin/analytics" element={<Analytics />} />
                 <Route path="/admin/distributors" element={<Distributors />} />
               </Route>

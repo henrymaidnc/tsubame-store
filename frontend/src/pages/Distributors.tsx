@@ -12,6 +12,9 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import { Plus } from "lucide-react";
+import { distributorsAPI } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const deliveries = [
   { product: "Cáo mùa xuân Sticker (×50)", batch: "STK-2025-001", distributor: "Konbini 30%", date: "2025-11-01", status: "delivered" },
@@ -24,6 +27,30 @@ const deliveries = [
 export default function Distributors() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ name: "", branch: "", commission: "", contact: "", phone: "" });
+  const { toast } = useToast();
+
+  const save = async () => {
+    try {
+      setSaving(true);
+      await distributorsAPI.create({
+        name: form.name,
+        branch: form.branch,
+        commission: form.commission ? Number(form.commission) : undefined,
+        contact: form.contact,
+        phone: form.phone,
+      });
+      toast({ title: "Distributor added" });
+      setOpen(false);
+      setForm({ name: "", branch: "", commission: "", contact: "", phone: "" });
+    } catch (e: any) {
+      toast({ title: "Failed to add distributor", description: e?.response?.data?.detail || "Check API" });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const filtered = distributors.filter(
     (d) =>
@@ -42,6 +69,10 @@ export default function Distributors() {
           Manage distributor profiles, deliveries and assignments
         </p>
       </div>
+      <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+        <Plus className="w-4 h-4" />
+        Add Distributor
+      </button>
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Distributor List */}
@@ -262,6 +293,26 @@ export default function Distributors() {
           </div>
         </div>
       </div>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
+          <div className="bg-background rounded-xl w-full max-w-lg border border-border" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border text-base font-semibold">Add Distributor</div>
+            <div className="p-5 space-y-3">
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <div className="grid grid-cols-2 gap-3">
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Branch" value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value })} />
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Commission %" value={form.commission} onChange={(e) => setForm({ ...form, commission: e.target.value })} />
+              </div>
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Contact" value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} />
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </div>
+            <div className="p-5 border-t border-border flex gap-2 justify-end">
+              <button onClick={() => setOpen(false)} className="rounded-lg border border-border bg-muted px-4 py-2 text-sm">Cancel</button>
+              <button disabled={saving} onClick={save} className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm">{saving ? "Saving..." : "Save"}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

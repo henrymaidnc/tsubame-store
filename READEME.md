@@ -22,8 +22,23 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 Certbot
 sudo apt update 
 sudo apt install certbot python3-certbot-nginx -y
+sudo certbot certonly --standalone --preferred-challenges http -d tsubame-arts.econictek.com
 sudo certbot --nginx -d tsubame-arts.econictek.com
 sudo certbot renew
+- Issue the cert:
+sudo certbot certonly --webroot -w /var/www/certbot -d tsubame-arts.econictek.com
+- Point Nginx to the certs:
+ssl_certificate /etc/letsencrypt/live/tsubame-arts.econictek.com/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/tsubame-arts.econictek.com/privkey.pem;
+- Reload Nginx:
+sudo nginx -t && sudo nginx -s reload
+- If Docker: docker compose exec -T nginx nginx -t && docker compose exec -T nginx nginx -s reload
+
+Renewal hook
+- Add a deploy hook to reload Nginx after renewals:
+  - sudo crontab -e
+  - 12 3 * * * certbot renew --deploy-hook "nginx -s reload"
+  - If Docker: certbot renew --deploy-hook "docker compose exec -T nginx nginx -s reload"
 
 ## Seed DB and login
 
@@ -32,7 +47,7 @@ Seed the database with users and sample data (safe to run more than once):
 **Dev:**
 ```bash
 docker compose up -d   # ensure stack is running
-./scripts/init-db.sh   # or: docker compose exec backend python init_db.py
+docker compose exec backend python init_db.py
 ```
 
 **Prod:**

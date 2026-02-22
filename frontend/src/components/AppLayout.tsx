@@ -11,16 +11,18 @@ import {
   Store,
   ChevronLeft,
   ChevronRight,
+  Package,
 } from "lucide-react";
 import { useState } from "react";
-
 const navItems = [
   { to: "/admin/revenue", label: "Revenue", icon: DollarSign },
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/catalog", label: "Catalog", icon: ShoppingBag },
+  { to: "/admin/products", label: "Products", icon: ShoppingBag },
+  { to: "/admin/materials", label: "Materials", icon: Package },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/distributors", label: "Distributors", icon: Truck },
 ];
+
 
 interface AppLayoutProps {
   onLogout: () => void;

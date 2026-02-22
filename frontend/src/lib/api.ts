@@ -60,6 +60,21 @@ export interface Product {
   description: string;
   image: string;
 }
+export interface Material {
+  id: number;
+  name: string;
+  unit: string;
+  stock: number;
+  cost_per_unit: number;
+}
+export interface DistributorPayload {
+  name: string;
+  branch?: string;
+  address?: string;
+  contact?: string;
+  phone?: string;
+  commission?: number;
+}
 export interface RevenueSummary {
   total_revenue: number;
   average_revenue: number;
@@ -105,6 +120,25 @@ export const productsAPI = {
   
   getById: async (id: number): Promise<Product> => {
     const response = await api.get(`/products/${id}`);
+    return response.data;
+  },
+  
+  create: async (payload: Partial<Product>) => {
+    const response = await api.post('/products', payload);
+    return response.data;
+  },
+};
+
+export const materialsAPI = {
+  create: async (payload: Partial<Material>) => {
+    const response = await api.post('/materials', payload);
+    return response.data;
+  },
+};
+
+export const distributorsAPI = {
+  create: async (payload: DistributorPayload) => {
+    const response = await api.post('/distributors', payload);
     return response.data;
   },
 };
