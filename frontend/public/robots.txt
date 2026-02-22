@@ -12,4 +12,4 @@ Allow: /
 
 User-agent: *
 Allow: /
-Sitemap: https://tsubame-art.econictek.com/sitemap.xml
+Sitemap: https://tsubame-arts.econictek.com/sitemap.xml

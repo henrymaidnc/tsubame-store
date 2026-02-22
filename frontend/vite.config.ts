@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
   preview: {
     host: "0.0.0.0",
     port: 8082,
-    allowedHosts: ["tsubame-art.econictek.com"],
+    allowedHosts: ["tsubame-arts.econictek.com"],
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
