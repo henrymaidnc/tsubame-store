@@ -62,6 +62,29 @@ Then log in via API:
 - **POST** `/api/auth/login` with JSON: `{"email":"admin@tsubame.com","password":"admin123"}` (or `user@tsubame.com` / `user123`).
 - Use the returned `access_token` in the **Authorization: Bearer &lt;token&gt;** header for protected routes.
 
+## Alembic migrations (manual)
+
+Run schema migrations manually when deploying or after model changes:
+
+Local:
+```bash
+cd backend
+alembic revision --autogenerate -m "describe change"
+alembic upgrade head
+```
+
+Docker:
+```bash
+docker compose exec backend alembic upgrade head
+```
+
+Troubleshooting:
+- To redo last step: `alembic downgrade -1 && alembic upgrade head`
+- Show current: `alembic current`
+- If you want backend to skip running migrations at startup, set env:
+  - `RUN_MIGRATIONS=false` for the backend container entrypoint
+  - `RUN_MIGRATIONS_AT_STARTUP=false` to skip the in-app startup hook
+
 In Google Search Console:
 - Add and verify the new URL prefix property: https://tsubame-arts.econictek.com/
 - Submit the new sitemap: https://tsubame-arts.econictek.com/sitemap.xml

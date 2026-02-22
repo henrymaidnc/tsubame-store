@@ -73,3 +73,28 @@ With Docker Compose (see repo root): Nginx proxies `/api/` to the backend; use `
 - `POSTGRES_*` / `DATABASE_URL` – PostgreSQL connection  
 - `API_V1_PREFIX` – default `/api`  
 - `ACCESS_TOKEN_EXPIRE_MINUTES` – JWT expiry  
+
+## Alembic migrations
+
+Generate and apply migrations:
+
+```bash
+# from backend/
+alembic revision --autogenerate -m "describe change"
+alembic upgrade head
+```
+
+Useful commands:
+```bash
+alembic current        # show current DB revision
+alembic downgrade -1   # revert last migration
+```
+
+Docker:
+```bash
+docker compose exec backend alembic upgrade head
+```
+
+Startup behavior:
+- Container entrypoint respects `RUN_MIGRATIONS` (set to `false` to skip).
+- App also runs migrations unless `RUN_MIGRATIONS_AT_STARTUP=false`.

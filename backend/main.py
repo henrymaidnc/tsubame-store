@@ -17,9 +17,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from alembic import command
 from alembic.config import Config
 from pathlib import Path
+import os
 
 from core.config import settings
-from models.database import Base, engine
+from models.database import Base
 from api import auth, materials, products
 
 def run_migrations():
@@ -28,8 +29,9 @@ def run_migrations():
     cfg.set_main_option("script_location", str(Path(__file__).with_name("alembic")))
     command.upgrade(cfg, "head")
 
-Base.metadata.create_all(bind=engine)
-run_migrations()
+# Prefer Alembic migrations for schema management
+if os.getenv("RUN_MIGRATIONS_AT_STARTUP", "true").lower() != "false":
+    run_migrations()
 
 app = FastAPI(
     title=settings.project_name,
