@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 8002
 
+ENV RUN_MIGRATIONS=false
 CMD ["sh", "-c", "if [ \"$RUN_MIGRATIONS\" != \"false\" ]; then alembic upgrade head; fi; exec uvicorn main:app --host 0.0.0.0 --port 8002"]

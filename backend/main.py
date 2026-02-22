@@ -29,8 +29,7 @@ def run_migrations():
     cfg.set_main_option("script_location", str(Path(__file__).with_name("alembic")))
     command.upgrade(cfg, "head")
 
-# Prefer Alembic migrations for schema management
-if os.getenv("RUN_MIGRATIONS_AT_STARTUP", "true").lower() != "false":
+if os.getenv("RUN_MIGRATIONS_AT_STARTUP", "false").lower() != "false":
     run_migrations()
 
 app = FastAPI(

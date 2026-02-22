@@ -27,25 +27,38 @@ def upgrade() -> None:
     op.execute('ALTER TABLE distributors DROP COLUMN IF EXISTS mobile_phone')
     op.execute('ALTER TABLE distributors DROP COLUMN IF EXISTS branch')
     op.execute('ALTER TABLE distributors DROP COLUMN IF EXISTS address')
-    # Add columns idempotently (avoid DuplicateColumn if created elsewhere)
     op.execute('ALTER TABLE inventory ADD COLUMN IF NOT EXISTS status VARCHAR')
     op.execute('ALTER TABLE inventory ADD COLUMN IF NOT EXISTS stock INTEGER')
     op.execute('DROP INDEX IF EXISTS ix_inventory_product_id')
     op.create_index(op.f('ix_inventory_product_id'), 'inventory', ['product_id'], unique=True)
     op.execute('ALTER TABLE inventory DROP COLUMN IF EXISTS number')
-    op.add_column('orders', sa.Column('date', sa.DateTime(), nullable=True))
-    op.add_column('orders', sa.Column('distributor_detail_id', sa.Integer(), nullable=True))
-    op.add_column('orders', sa.Column('total_price', sa.Float(), nullable=True))
+    op.execute('ALTER TABLE orders ADD COLUMN IF NOT EXISTS date TIMESTAMP WITHOUT TIME ZONE')
+    op.execute('ALTER TABLE orders ADD COLUMN IF NOT EXISTS distributor_detail_id INTEGER')
+    op.execute('ALTER TABLE orders ADD COLUMN IF NOT EXISTS total_price DOUBLE PRECISION')
     op.execute('DROP INDEX IF EXISTS ix_orders_distributor_id')
     op.execute('DROP INDEX IF EXISTS ix_orders_inventory_id')
-    # Safely drop FKs if they exist
     op.execute('ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_inventory_id_fkey')
     op.execute('ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_distributor_id_fkey')
-    op.create_foreign_key(None, 'orders', 'distributor_details', ['distributor_detail_id'], ['id'])
+    op.execute("""
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM information_schema.table_constraints
+            WHERE constraint_name = 'orders_distributor_detail_id_fkey'
+              AND table_name = 'orders'
+        ) THEN
+            ALTER TABLE orders
+            ADD CONSTRAINT orders_distributor_detail_id_fkey
+            FOREIGN KEY (distributor_detail_id)
+            REFERENCES distributor_details(id);
+        END IF;
+    END $$;
+    """)
     op.execute('ALTER TABLE orders DROP COLUMN IF EXISTS number')
     op.execute('ALTER TABLE orders DROP COLUMN IF EXISTS inventory_id')
     op.execute('ALTER TABLE orders DROP COLUMN IF EXISTS distributor_id')
-    op.add_column('products', sa.Column('cost', sa.Float(), nullable=True))
+    op.execute('ALTER TABLE products ADD COLUMN IF NOT EXISTS cost DOUBLE PRECISION')
     op.alter_column('products', 'price',
                     existing_type=sa.INTEGER(),
                     type_=sa.Float(),
