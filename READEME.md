@@ -20,8 +20,9 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 - See [docs/SSL-and-production.md](docs/SSL-and-production.md) for SSL and Certbot.
 
 Certbot
-sudo apt update sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d tsubame-art.econictek.com
+sudo apt update 
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d tsubame-arts.econictek.com
 sudo certbot renew
 
 ## Seed DB and login

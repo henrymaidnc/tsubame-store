@@ -28,7 +28,7 @@ app = FastAPI(
     docs_url=settings.docs_url,
     redoc_url=settings.redoc_url,
 )
-_default = "https://tsubame-art.econictek.com,https://www.tsubame-art.econictek.com,http://localhost:8082,http://localhost:3000"
+_default = "https://tsubame-arts.econictek.com,https://www.tsubame-arts.econictek.com,http://localhost:8082,http://localhost:3000"
 _allowed = [x.strip() for x in os.getenv("CORS_ORIGINS", _default).split(",") if x.strip()]
 
 app.add_middleware(
