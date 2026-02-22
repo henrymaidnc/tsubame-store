@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useLocation, Navigate } from "react-router-dom";
+import { Outlet, NavLink, useLocation, Navigate, Link } from "react-router-dom";
 import {
   DollarSign,
   LayoutDashboard,
@@ -109,6 +109,15 @@ export default function AppLayout({ onLogout, role }: AppLayoutProps) {
 
         {/* Bottom */}
         <div className="border-t border-sidebar-border p-3 space-y-1">
+          <Link
+            to="/"
+            onClick={() => setMobileOpen(false)}
+            className="hidden md:flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+            title="Back to site"
+          >
+            <Store className="h-4 w-4 shrink-0" />
+            {!sidebarCollapsed && <span>Back to site</span>}
+          </Link>
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="hidden md:flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
