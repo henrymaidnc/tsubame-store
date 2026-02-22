@@ -34,8 +34,31 @@ export default function AppLayout({ onLogout, role }: AppLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
 
+  // derive current title
+  const current = navItems.find(n => location.pathname.startsWith(n.to));
+  const title = current?.label || "Admin";
+
   return (
     <div className="flex h-screen w-full overflow-hidden">
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-background border-b border-border flex items-center justify-between px-4">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu className="h-5 w-5" />
+          <span>Menu</span>
+        </button>
+        <span className="font-semibold">{title}</span>
+        <button
+          onClick={onLogout}
+          className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+          aria-label="Logout"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
+      </div>
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div
@@ -116,7 +139,7 @@ export default function AppLayout({ onLogout, role }: AppLayoutProps) {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 flex flex-col overflow-auto w-full">
+      <main className="flex-1 flex flex-col overflow-auto w-full pt-14 md:pt-0">
         <Outlet />
       </main>
     </div>
