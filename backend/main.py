@@ -14,13 +14,22 @@ OpenAPI:   /api/openapi.json
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from alembic import command
+from alembic.config import Config
+from pathlib import Path
 
 from core.config import settings
 from models.database import Base, engine
 from api import auth, materials, products
 
-# Create database tables
+def run_migrations():
+    cfg = Config(str(Path(__file__).with_name("alembic.ini")))
+    cfg.set_main_option("sqlalchemy.url", settings.database_url)
+    cfg.set_main_option("script_location", str(Path(__file__).with_name("alembic")))
+    command.upgrade(cfg, "head")
+
 Base.metadata.create_all(bind=engine)
+run_migrations()
 
 app = FastAPI(
     title=settings.project_name,
