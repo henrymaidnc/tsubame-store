@@ -513,14 +513,14 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* HERO                                                 */}
       {/* ════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden h-[160px] sm:h-[320px] md:h-[360px] lg:h-[400px] xl:h-[600px]">
+      <section className="relative overflow-hidden h-[140px] sm:h-[280px] md:h-[320px] lg:h-[360px] xl:h-[460px]">
         {/* Floating fox decorations */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#c7ecf1_0%,white_85%)]" />
           <img
             src="/background.jpg"
             alt="Tsubame Arts hero background"
-            className="absolute inset-0 h-full w-full object-contain md:object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: 'center top' }}
           />
           <motion.img
