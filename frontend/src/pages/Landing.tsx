@@ -659,6 +659,13 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      <div className="flex items-center justify-center py-2">
+        <a href="#about" className="inline-flex items-center justify-center w-12 h-12 text-foreground hover:bg-muted/80 transition-colors">
+          <motion.div animate={{ y: [0, 6, 0] }} transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}>
+            <ChevronDown className="w-6 h-6" />
+          </motion.div>
+        </a>
+      </div>
 
       {/* ════════════════════════════════════════════════════ */}
       {/* TRUST BADGES                                         */}
