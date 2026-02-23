@@ -48,6 +48,27 @@
   .chill-btn:active {
     transform: translateY(0) scale(0.98);
   }
+
+  /* Shopee-style utilities */
+  .shopee-tab {
+    @apply px-4 py-2 text-sm font-medium transition-all duration-200 border border-transparent;
+  }
+
+  .shopee-tab-active {
+    @apply bg-primary text-primary-foreground rounded-lg shadow-sm;
+  }
+
+  .shopee-tab-inactive {
+    @apply bg-white border-border/40 text-foreground/80 hover:bg-muted/50 rounded-lg;
+  }
+
+  .sidebar-item-active {
+    @apply text-primary font-bold;
+  }
+
+  .sidebar-item-inactive {
+    @apply text-foreground/80 hover:text-primary transition-colors;
+  }
 }
 
 @layer base {

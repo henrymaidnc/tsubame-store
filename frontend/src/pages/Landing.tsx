@@ -72,19 +72,19 @@ const statusConfig: Record<
   { label: string; dot: string; badge: string }
 > = {
   "in-stock": {
-    label: "In Stock",
+    label: "Còn hàng",
     dot: "bg-emerald-500",
     badge:
       "bg-emerald-50 text-emerald-700 border border-emerald-200/60",
   },
   "low-stock": {
-    label: "Low Stock",
+    label: "Sắp hết hàng",
     dot: "bg-amber-500",
     badge:
       "bg-amber-50 text-amber-700 border border-amber-200/60",
   },
   "out-of-stock": {
-    label: "Sold Out",
+    label: "Tạm hết hàng",
     dot: "bg-rose-500",
     badge:
       "bg-rose-50 text-rose-700 border border-rose-200/60",
@@ -219,7 +219,7 @@ function FeatureCard({
 /* ─── Main Component ────────────────────────────────────── */
 export default function Landing() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("Tất cả");
   const [availableOnly, setAvailableOnly] = useState(false);
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -227,7 +227,7 @@ export default function Landing() {
   const [showFilters, setShowFilters] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [categories, setCategories] = useState<string[]>(["Tất cả"]);
   const [isLoading, setIsLoading] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -237,7 +237,7 @@ export default function Landing() {
   useEffect(() => {
     const title = "TSUBAME'S STICKER SHOP ✨";
     const description =
-      "🔋✨ Let me recharge you with cute little things ✨🔋";
+      "🔋✨ Để tớ nạp năng lượng cho cậu bằng những thứ nhỏ bé đáng yêu này nhé ✨🔋";
     document.title = title;
     const metaDesc = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (metaDesc) metaDesc.setAttribute("content", description);
@@ -259,13 +259,13 @@ export default function Landing() {
       .then((list) => {
         setProducts(list);
         const cats = Array.from(new Set(list.map((p: Product) => p.category))) as string[];
-        setCategories(["All", ...cats]);
+        setCategories(["Tất cả", ...cats]);
         setIsLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching products:", err);
         setProducts([]);
-        setCategories(["All"]);
+        setCategories(["Tất cả"]);
         setIsLoading(false);
       });
   }, []);
@@ -291,14 +291,14 @@ export default function Landing() {
     const matchSearch =
       (p.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
       (p.description ?? "").toLowerCase().includes(search.toLowerCase());
-    const matchCat = category === "All" || p.category === category;
+    const matchCat = category === "Tất cả" || p.category === category;
     // Price logic
     const matchAvail = !availableOnly || getProductStatus(p) !== "out-of-stock";
     return matchSearch && matchCat && matchAvail;
   });
 
   const activeFilterCount =
-    (category !== "All" ? 1 : 0) +
+    (category !== "Tất cả" ? 1 : 0) +
     (availableOnly ? 1 : 0);
 
   const toggleFavorite = (id: number) =>
@@ -363,7 +363,7 @@ export default function Landing() {
                   transition={{ delay: 0.1 + i * 0.06 }}
                   className="relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
                 >
-                  {item}
+                  {item === "Products" ? "Sản phẩm" : item === "About" ? "Giới thiệu" : "Liên hệ"}
                 </motion.a>
               ))}
               <motion.div
@@ -376,7 +376,7 @@ export default function Landing() {
                   to="/login"
                   className="inline-flex items-center gap-2 bg-foreground text-background px-5 py-2 rounded-full text-sm font-semibold hover:bg-foreground/90 transition-colors"
                 >
-                  Admin Portal
+                  Quản trị viên
                   <ExternalLink className="w-3.5 h-3.5" />
                 </Link>
               </motion.div>
@@ -391,7 +391,7 @@ export default function Landing() {
                 <button
                   onClick={() => setShowThemePicker(!showThemePicker)}
                   className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
-                  title="Switch theme"
+                  title="Đổi giao diện"
                 >
                   <Palette className="w-4.5 h-4.5" />
                 </button>
@@ -469,14 +469,14 @@ export default function Landing() {
                     to="/login"
                     className="block text-center bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold"
                   >
-                    Admin Portal
+                    Trang quản trị
                   </Link>
                 </div>
 
                 {/* Theme switcher in mobile */}
                 <div className="pt-2 border-t border-border">
                   <p className="px-3 py-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                    Theme
+                    Giao diện
                   </p>
                   <div className="flex gap-2 px-3 py-2">
                     {themeOptions.map((t) => (
@@ -558,7 +558,7 @@ export default function Landing() {
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 className="chill-btn group inline-flex items-center gap-2.5 bg-primary text-primary-foreground px-7 py-4.5 rounded-2xl font-bold text-base"
               >
-                🛍️ Shop Now!
+                Mua Ngay!
                 <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
               </motion.a>
               {/* <motion.a
@@ -568,7 +568,7 @@ export default function Landing() {
                 transition={{ type: "spring", stiffness: 400, damping: 15 }}
                 className="chill-btn inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-bold text-base bg-background"
               >
-                🌸 Learn More
+                🌸 Xem thêm
               </motion.a> */}
             </motion.div>
 
@@ -591,10 +591,14 @@ export default function Landing() {
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {stat.label}
-                  </p>
+                  )}
                 </div>
-              ))}
-            </motion.div> */}
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+.div> */}
           </div>
         </div>
       </section>
@@ -603,7 +607,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex items-center justify-center">
           <div className="max-w-2xl rounded-2xl bg-muted/30 border border-border/40 px-6 py-5">
             <p className="text-center text-sm md:text-base text-muted-foreground">
-              🔋✨ Let me recharge you with cute little things ✨🔋
+              🔋✨ Để tớ nạp năng lượng cho cậu bằng những thứ nhỏ bé đáng yêu này nhé ✨🔋
               <br />
               Xin chào các cậu đến với chiếc shop nhỏ Tsubame.arts - nơi bán các sản phẩm cute do tớ tự thiết kế 😊🐥
             </p>
@@ -643,7 +647,7 @@ export default function Landing() {
               {
                 icon: Package,
                 title: "Eco Packaging",
-                desc: "Sustainable materials used",
+                desc: "Chúng tớ tôn trọng sự riêng tư của cậu. Không spam, hứa luôn! 🌸",
               },
             ].map((item, i) => (
               <TrustBadgeItem
@@ -656,7 +660,7 @@ export default function Landing() {
             ))}
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* ════════════════════════════════════════════════════ */}
       {/* WHY CHOOSE US                                        */}
@@ -664,31 +668,31 @@ export default function Landing() {
       <section id="about" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
-            eyebrow="Why TsubameArts"
-            title="Crafted With Passion"
-            subtitle="Every product is designed and made by hand with attention to the smallest details."
+            eyebrow="Tại sao chọn TsubameArts"
+            title="Nạp năng lượng nhé?"
+            subtitle="Đăng ký nhận tin để là người đầu tiên biết về các bộ sưu tập mới và ưu đãi đặc quyền."
           />
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 icon: Star,
-                title: "Premium Materials",
+                title: "Chất liệu cao cấp",
                 description:
-                  "We source the finest materials — waterproof lamination, high-grade resin, and archival-quality inks.",
+                  "Tớ luôn tìm chọn những chất liệu tốt nhất — cán màng chống thấm nước, resin cao cấp và mực in chất lượng họa sĩ.",
                 accent: "from-amber-400 to-orange-500",
               },
               {
                 icon: Heart,
-                title: "Original Artwork",
+                title: "Tác phẩm gốc",
                 description:
-                  "Every design is an original illustration. You won't find these whimsical foxes anywhere else.",
+                  "Mỗi thiết kế đều là hình minh họa gốc. Cậu sẽ không tìm thấy những chú cáo kỳ quặc này ở bất cứ nơi nào khác đâu.",
                 accent: "from-rose-400 to-pink-500",
               },
               {
                 icon: ShoppingBag,
-                title: "Thoughtful Delivery",
+                title: "Giao hàng chu đáo",
                 description:
-                  "Each order ships gift-ready with eco-friendly packaging and a handwritten thank you note.",
+                  "Mỗi đơn hàng đều được đóng gói như một món quà xinh xắn với bao bì thân thiện môi trường và một tấm thiệp cảm ơn viết tay.",
                 accent: "from-sky-400 to-blue-500",
               },
             ].map((feature, index) => (
@@ -706,472 +710,312 @@ export default function Landing() {
       </section>
 
       {/* ════════════════════════════════════════════════════ */}
-      {/* PRODUCTS                                             */}
+      {/* PRODUCTS SECTION                                    */}
       {/* ════════════════════════════════════════════════════ */}
-      <section
-        id="products"
-        className="py-8 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20"
-      >
+      <section id="products" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8 bg-muted/20">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
-            eyebrow="Shop"
-            title="Our Collection"
-            subtitle="Browse our curated selection of fox-themed treasures"
+            eyebrow="Cửa hàng"
+            title="Bộ sưu tập của chúng tớ"
+            subtitle="Khám phá những kho báu chủ đề cáo được tuyển chọn kỹ lưỡng"
           />
 
-          {/* Search & Toolbar */}
-          <div className="mb-8 space-y-4">
-            <div className="flex flex-col lg:flex-row gap-3">
-              {/* Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-muted-foreground" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search products…"
-                  className="w-full pl-10 pr-10 py-2.5 bg-background border border-border rounded-xl text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
-                />
-                {search && (
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar - Danh Mục */}
+            <aside className="hidden lg:block w-48 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-6 pb-2 border-b border-border/60">
+                <List className="w-5 h-5" />
+                <h3 className="font-bold text-lg text-foreground">Danh Mục</h3>
+              </div>
+              <ul className="space-y-4">
+                <li>
                   <button
-                    onClick={() => setSearch("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setCategory("Tất cả")}
+                    className={`flex items-center gap-2 w-full text-left text-sm font-medium transition-all ${category === "Tất cả" ? "sidebar-item-active" : "sidebar-item-inactive"
+                      }`}
                   >
-                    <X className="w-4 h-4" />
+                    <span className={category === "Tất cả" ? "text-primary" : "text-transparent"}>▶</span>
+                    Sản Phẩm
                   </button>
-                )}
+                  <ul className="mt-3 ml-4 space-y-3 border-l border-border pl-4">
+                    {categories.filter(c => c !== "Tất cả").map((cat) => (
+                      <li key={cat}>
+                        <button
+                          onClick={() => setCategory(cat)}
+                          className={`block text-[13px] font-medium transition-all ${category === cat ? "sidebar-item-active" : "sidebar-item-inactive"
+                            }`}
+                        >
+                          {cat}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              </ul>
+            </aside>
+
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              {/* Shopee-style Sorting Header */}
+              <div className="bg-muted px-4 py-3 rounded-lg flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-sm font-medium text-foreground/80">Sắp xếp theo</span>
+                  <div className="flex flex-wrap gap-2">
+                    <button className="shopee-tab shopee-tab-active">Phổ Biến</button>
+                    <button className="shopee-tab shopee-tab-inactive">Mới Nhất</button>
+                    <button className="shopee-tab shopee-tab-inactive">Bán Chạy</button>
+                    <div className="relative group">
+                      <button className="shopee-tab shopee-tab-inactive flex items-center gap-2 min-w-[120px] justify-between">
+                        Giá
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-primary font-bold">1</span>
+                    <span className="text-foreground/60">/4</span>
+                  </div>
+                  <div className="flex bg-white rounded-lg border border-border/40 overflow-hidden shadow-sm">
+                    <button className="p-2 text-foreground/40 hover:text-foreground transition-colors border-r border-border/40">
+                      <ChevronUp className="w-4 h-4 -rotate-90" />
+                    </button>
+                    <button className="p-2 text-foreground/60 hover:text-primary transition-colors">
+                      <ChevronUp className="w-4 h-4 rotate-90" />
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Toolbar Buttons */}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all ${showFilters || activeFilterCount > 0
-                    ? "bg-primary/10 border-primary/30 text-primary"
-                    : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
-                    }`}
+              {/* Mobile Category Select */}
+              <div className="lg:hidden mb-6">
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-sm font-medium"
                 >
-                  <Filter className="w-4 h-4" />
-                  Filters
-                  {activeFilterCount > 0 && (
-                    <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${showFilters ? "rotate-180" : ""
-                      }`}
-                  />
-                </button>
+                  {categories.map(c => (
+                    <option key={c} value={c}>{c === "Tất cả" ? "Sản Phẩm (Tất cả)" : c}</option>
+                  ))}
+                </select>
+              </div>
 
-                <div className="flex bg-background border border-border rounded-xl overflow-hidden">
+              {/* Search Result Summary and Available Filter */}
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <p className="text-sm text-muted-foreground">
+                    Tìm thấy <span className="font-bold text-foreground">{filtered.length}</span> sản phẩm
+                  </p>
+                  <div className="h-4 w-px bg-border hidden sm:block" />
+                  <label className="inline-flex items-center gap-2.5 cursor-pointer select-none group">
+                    <div
+                      className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${availableOnly ? "bg-primary" : "bg-border"}`}
+                      onClick={() => setAvailableOnly(!availableOnly)}
+                    >
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${availableOnly ? "translate-x-4" : ""}`}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                      Sản phẩm hiện có
+                    </span>
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-2.5 transition-colors ${viewMode === "grid"
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    title="Grid view"
+                    className={`p-2 rounded-lg transition-colors ${viewMode === "grid" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"}`}
                   >
                     <Grid className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-2.5 transition-colors ${viewMode === "list"
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    title="List view"
+                    className={`p-2 rounded-lg transition-colors ${viewMode === "list" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"}`}
                   >
                     <List className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-            </div>
 
-            {/* Filter Panel */}
-            <AnimatePresence>
-              {showFilters && (
+              {/* Product Grid / List */}
+              {filtered.length === 0 ? (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-20"
                 >
-                  <div className="bg-background p-5 rounded-2xl border border-border shadow-sm space-y-5">
-                    {/* Categories */}
-                    <div>
-                      <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                        Category
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {categories.map((cat) => (
-                          <button
-                            key={cat}
-                            onClick={() => setCategory(cat)}
-                            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${category === cat
-                              ? "bg-foreground text-background shadow-sm"
-                              : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80"
-                              }`}
-                          >
-                            {cat}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Price Range */}
-                    {/* <div>
-                      <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                        Price Range
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {priceRanges.map((r, i) => (
-                          <button
-                            key={i}
-                            onClick={() => setPriceRange(i)}
-                            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${priceRange === i
-                              ? "bg-foreground text-background shadow-sm"
-                              : "bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80"
-                              }`}
-                          >
-                            {r.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div> */}
-
-                    {/* Availability toggle */}
-                    <label className="inline-flex items-center gap-2.5 cursor-pointer select-none group">
-                      <div
-                        className={`relative w-9 h-5 rounded-full transition-colors duration-200 ${availableOnly ? "bg-primary" : "bg-border"
-                          }`}
-                        onClick={() => setAvailableOnly(!availableOnly)}
-                      >
-                        <div
-                          className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${availableOnly ? "translate-x-4" : ""
-                            }`}
-                        />
-                      </div>
-                      <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                        Available only
-                      </span>
-                    </label>
-
-                    {/* Clear filters */}
-                    {activeFilterCount > 0 && (
-                      <button
-                        onClick={() => {
-                          setCategory("All");
-                          setAvailableOnly(false);
-                        }}
-                        className="text-xs font-medium text-primary hover:underline"
-                      >
-                        Clear all filters
-                      </button>
-                    )}
-                  </div>
+                  <Search className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+                  <h2 className="text-2xl font-bold text-foreground mb-4">Không tìm thấy sản phẩm nào</h2>
+                  <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+                    Thử điều chỉnh bộ lọc hoặc tìm kiếm khác để tìm thứ cậu muốn nhé.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSearch("");
+                      setCategory("Tất cả");
+                      setAvailableOnly(false);
+                    }}
+                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-bold hover:bg-primary/95 transition-all"
+                  >
+                    Xóa tất cả bộ lọc
+                  </button>
                 </motion.div>
-              )}
-            </AnimatePresence>
+              ) : (
+                <div
+                  className={
+                    viewMode === "grid"
+                      ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5"
+                      : "space-y-4"
+                  }
+                >
+                  <AnimatePresence>
+                    {filtered.map((product, index) => {
+                      const pStatus = getProductStatus(product);
+                      const { label, dot, badge } = statusConfig[pStatus];
+                      const outOfStock = pStatus === "out-of-stock";
 
-            {/* Results count */}
-            <p className="text-xs text-muted-foreground">
-              Showing{" "}
-              <span className="font-semibold text-foreground">
-                {filtered.length}
-              </span>{" "}
-              of {products.length} products
-            </p>
-          </div>
-
-          {/* ── Product Grid ── */}
-          {filtered.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <Search className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
-              <p className="text-muted-foreground text-lg font-medium">
-                No products found
-              </p>
-              <p className="text-muted-foreground text-sm mt-1">
-                Try adjusting your search or filters
-              </p>
-            </motion.div>
-          ) : (
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5"
-                  : "space-y-3"
-              }
-            >
-              <AnimatePresence>
-                {filtered.map((product, index) => {
-                  const pStatus = getProductStatus(product);
-                  const { label, dot, badge } = statusConfig[pStatus];
-                  const outOfStock = pStatus === "out-of-stock";
-
-                  if (viewMode === "grid") {
-                    return (
-                      <motion.div
-                        key={product.id}
-                        initial={{ opacity: 0, x: -40 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true, margin: "-30px" }}
-                        transition={{ delay: index * 0.08, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-                        className="group"
-                      >
-                        <div className="chill-card bg-background overflow-hidden h-full flex flex-col">
-                          {/* Image */}
-                          <div className="relative aspect-square overflow-hidden bg-muted/40">
-                            {product.shopee_link ? (
-                              <a href={product.shopee_link} target="_blank" rel="noreferrer" title="Shop on Shopee">
+                      if (viewMode === "grid") {
+                        return (
+                          <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.05 }}
+                            className="group"
+                          >
+                            <div className="chill-card bg-background overflow-hidden h-full flex flex-col">
+                              <div className="relative aspect-[4/5] overflow-hidden bg-muted/40">
                                 <img
                                   src={product.image}
                                   alt={product.name}
                                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                              </a>
-                            ) : (
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            )}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                            {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                            {/* Status badge */}
-                            <span
-                              className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${badge}`}
-                            >
-                              <span
-                                className={`w-1.5 h-1.5 rounded-full ${dot}`}
-                              />
-                              {label}
-                            </span>
-
-                            {/* Action buttons */}
-                            <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
-                              <button
-                                onClick={() => toggleFavorite(product.id)}
-                                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-sm"
-                              >
-                                <Heart
-                                  className={`w-3.5 h-3.5 transition-colors ${isFavorite(product.id)
-                                    ? "fill-rose-500 text-rose-500"
-                                    : "text-gray-600"
-                                    }`}
-                                />
-                              </button>
-                              <button
-                                onClick={() => setQuickView(product)}
-                                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-sm"
-                              >
-                                <Eye className="w-3.5 h-3.5 text-gray-600" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Info */}
-                          <div className="p-4">
-                            <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1">
-                              {product.category}
-                            </p>
-                            <h3 className="text-sm font-semibold text-foreground mb-3 line-clamp-2 leading-snug min-h-[2.5rem]">
-                              {product.shopee_link ? (
-                                <a
-                                  href={product.shopee_link}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="hover:underline"
-                                  title="Open on Shopee"
-                                >
-                                  {product.name}
-                                </a>
-                              ) : (
-                                product.name
-                              )}
-                            </h3>
-                            <div className="flex items-center justify-between gap-2">
-                              {/* <span className="text-base font-bold text-foreground">
-                                {product.price.toLocaleString()}
-                                <span className="text-xs font-medium text-muted-foreground ml-0.5">
-                                  đ
+                                <span className={`absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-bold ${badge}`}>
+                                  <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+                                  {label}
                                 </span>
-                              </span> */}
-                              <button
-                                disabled={outOfStock}
-                                className={`p-2 rounded-xl transition-all duration-200 ${outOfStock
-                                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                  : "bg-foreground text-background hover:bg-foreground/90 active:scale-95"
-                                  }`}
-                                title={outOfStock ? "Sold Out" : "Add to Cart"}
-                              >
-                                <ShoppingCart className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  }
 
-                  /* ── List View ── */
-                  return (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, x: -40 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true, margin: "-30px" }}
-                      transition={{ delay: index * 0.08, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
-                      className="chill-card group bg-background p-4"
-                    >
-                      <div className="flex gap-4 sm:gap-5">
-                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 rounded-xl overflow-hidden bg-muted/40">
-                          {product.shopee_link ? (
-                            <a href={product.shopee_link} target="_blank" rel="noreferrer" title="Shop on Shopee">
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            </a>
-                          ) : (
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-0.5">
-                                {product.category}
-                              </p>
-                              <h3 className="text-base font-semibold text-foreground mb-1 truncate">
-                                {product.shopee_link ? (
-                                  <a
-                                    href={product.shopee_link}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="hover:underline"
-                                    title="Open on Shopee"
+                                <div className="absolute top-2.5 right-2.5 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+                                  <button
+                                    onClick={() => toggleFavorite(product.id)}
+                                    className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-sm"
                                   >
-                                    {product.name}
-                                  </a>
-                                ) : (
-                                  product.name
-                                )}
-                              </h3>
-                              <p className="text-sm text-muted-foreground line-clamp-1 hidden sm:block">
-                                {product.description}
-                              </p>
+                                    <Heart className={`w-3.5 h-3.5 ${isFavorite(product.id) ? "fill-rose-500 text-rose-500" : "text-gray-600"}`} />
+                                  </button>
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); setQuickView(product); }}
+                                    className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-sm"
+                                  >
+                                    <Eye className="w-3.5 h-3.5 text-gray-600" />
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="p-3 flex flex-col flex-1">
+                                <h3 className="text-[13px] font-medium text-foreground line-clamp-2 leading-relaxed mb-auto h-[2.8rem]">
+                                  {product.name}
+                                </h3>
+                                <div className="mt-3 flex items-center justify-between">
+                                  <div className="flex flex-col">
+                                    <span className="text-primary font-bold text-sm">
+                                      <span className="text-[10px] mr-1">đ</span>
+                                      {product.price.toLocaleString()}
+                                    </span>
+                                  </div>
+                                  <button
+                                    disabled={outOfStock}
+                                    onClick={(e) => { e.stopPropagation(); }}
+                                    className={`p-2 rounded-lg transition-all ${outOfStock ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+                                  >
+                                    <ShoppingCart className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                            <button
-                              onClick={() => toggleFavorite(product.id)}
-                              className="p-1.5 hover:bg-muted rounded-lg transition-colors flex-shrink-0"
-                            >
-                              <Heart
-                                className={`w-4 h-4 transition-colors ${isFavorite(product.id)
-                                  ? "fill-rose-500 text-rose-500"
-                                  : "text-muted-foreground"
-                                  }`}
-                              />
-                            </button>
+                          </motion.div>
+                        );
+                      }
+
+                      return (
+                        <motion.div
+                          key={product.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          className="chill-card bg-background p-4 flex gap-4"
+                        >
+                          <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-muted/40">
+                            <img src={product.image} className="w-full h-full object-cover" />
                           </div>
-                          <div className="flex items-center justify-between mt-3 gap-3">
-                            <div className="flex items-center gap-2.5">
-                              <span
-                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge}`}
-                              >
-                                <span
-                                  className={`w-1.5 h-1.5 rounded-full ${dot}`}
-                                />
-                                {label}
+                          <div className="flex-1 min-w-0 flex flex-col justify-between">
+                            <div>
+                              <h3 className="text-sm font-semibold truncate">{product.name}</h3>
+                              <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{product.description}</p>
+                            </div>
+                            <div className="flex items-center justify-between mt-2">
+                              <span className="text-primary font-bold">
+                                đ{product.price.toLocaleString()}
                               </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => setQuickView(product)}
-                                className="text-xs text-muted-foreground hover:text-foreground transition-colors font-medium hidden sm:block"
-                              >
-                                Quick View
-                              </button>
-                              <button
-                                disabled={outOfStock}
-                                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${outOfStock
-                                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                                  : "bg-foreground text-background hover:bg-foreground/90 active:scale-95"
-                                  }`}
-                              >
-                                <ShoppingCart className="w-3.5 h-3.5" />
-                                {outOfStock ? "Sold Out" : "Add"}
-                              </button>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => setQuickView(product)}
+                                  className="p-2 rounded-lg bg-muted text-muted-foreground hover:bg-muted/80"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button
+                                  disabled={outOfStock}
+                                  className={`p-2 rounded-lg ${outOfStock ? "bg-muted text-muted-foreground" : "bg-primary text-primary-foreground"}`}
+                                >
+                                  <ShoppingCart className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════ */}
       {/* NEWSLETTER / CTA                                     */}
       {/* ════════════════════════════════════════════════════ */}
-      <section id="contact" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="py-8 md:py-20 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="relative bg-foreground rounded-3xl overflow-hidden">
-            {/* Decorative */}
-            <div className="absolute top-0 right-0 w-72 h-72 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-
-            <div className="relative px-8 py-14 md:px-16 md:py-20 text-center">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-60px" }}
-                variants={fadeUp}
-              >
-                <Mail className="w-10 h-10 text-primary mx-auto mb-5" />
-                <h3 className="text-2xl md:text-3xl font-extrabold text-background mb-3 tracking-tight">
-                  Stay in the Loop
-                </h3>
-                <p className="text-background/60 max-w-md mx-auto mb-8 text-sm md:text-base">
-                  Get notified about new launches, seasonal drops, and exclusive discounts.
-                </p>
-                <form
-                  onSubmit={(e) => e.preventDefault()}
-                  className="flex flex-col sm:flex-row items-center gap-3 max-w-md mx-auto"
-                >
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    className="w-full px-4 py-3 rounded-xl bg-background/10 border border-background/20 text-background placeholder:text-background/40 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                  <button
-                    type="submit"
-                    className="w-full sm:w-auto px-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
-                  >
-                    Subscribe
-                  </button>
-                </form>
-              </motion.div>
-            </div>
+          <div className="relative bg-foreground rounded-[2rem] overflow-hidden px-8 py-16 text-center">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="relative z-10 max-w-2xl mx-auto"
+            >
+              <Mail className="w-10 h-10 text-primary mx-auto mb-6" />
+              <h3 className="text-3xl font-black text-background mb-4">Nạp năng lượng nhé?</h3>
+              <p className="text-background/60 mb-10">Đăng ký nhận tin để là người đầu tiên biết về các bộ sưu tập mới và ưu đãi đặc quyền.</p>
+              <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="email"
+                  placeholder="Địa chỉ email của cậu..."
+                  className="flex-1 px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-background focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <button type="submit" className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-all">
+                  Đăng ký
+                </button>
+              </form>
+              <p className="mt-6 text-xs text-background/40">Chúng tớ tôn trọng sự riêng tư của cậu. Không spam, hứa luôn! 🌸</p>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -1181,238 +1025,125 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       <AnimatePresence>
         {quickView && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setQuickView(null)}
-          >
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+              onClick={() => setQuickView(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-background rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-border"
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-4xl bg-background rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] overflow-y-auto md:overflow-visible"
             >
-              {/* Image */}
-              <div className="relative aspect-[4/3] bg-muted/40">
-                <img
-                  src={quickView.image}
-                  alt={quickView.name}
-                  className="w-full h-full object-cover"
-                />
-                <button
-                  onClick={() => setQuickView(null)}
-                  className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-background transition-colors shadow-sm"
-                >
-                  <X className="w-4 h-4 text-foreground" />
-                </button>
-                {/* Status */}
-                <span
-                  className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusConfig[getProductStatus(quickView)].badge
-                    }`}
-                >
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${statusConfig[getProductStatus(quickView)].dot
-                      }`}
-                  />
-                  {statusConfig[getProductStatus(quickView)].label}
-                </span>
+              <button
+                onClick={() => setQuickView(null)}
+                className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/10 hover:bg-black/20 text-foreground"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-full md:w-1/2 aspect-square">
+                <img src={quickView.image} alt={quickView.name} className="w-full h-full object-cover" />
               </div>
 
-              {/* Content */}
-              <div className="p-6 space-y-5">
-                <div>
-                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mb-1">
-                    {quickView.category}
-                  </p>
-                  <h2 className="text-xl font-bold text-foreground mb-2">
-                    {quickView.name}
-                  </h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {quickView.description}
-                  </p>
-                </div>
-
-                {/* <div className="text-2xl font-bold text-foreground">
-                  <span className="text-primary mr-1">đ</span>
-                  {quickView.price.toLocaleString()}
-                  <span className="text-base font-medium text-muted-foreground ml-1">
-                    đ
-                  </span>
-                </div> */}
-
-                {/* Details grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-muted/50 rounded-xl p-3.5">
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      In Stock
-                    </p>
-                    <p className="text-xs font-semibold text-foreground">
-                      {quickView.inventory?.stock || 0} units
-                    </p>
+              <div className="flex-1 p-8 md:p-10 flex flex-col">
+                <div className="mb-auto">
+                  <span className="text-xs font-bold text-primary tracking-widest uppercase mb-2 block">{quickView.category}</span>
+                  <h2 className="text-2xl font-black text-foreground mb-4 leading-tight">{quickView.name}</h2>
+                  <div className="py-4 border-y border-border/60 my-6">
+                    <p className="text-sm font-bold text-muted-foreground uppercase mb-2">Mô tả sản phẩm</p>
+                    <p className="text-muted-foreground leading-relaxed">{quickView.description || "Chưa có mô tả cho sản phẩm này."}</p>
                   </div>
-
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-3">
+                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                  <button className="flex-1 chill-btn bg-primary text-primary-foreground py-4 rounded-2xl font-bold shadow-lg shadow-primary/20">
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Thêm vào giỏ
+                  </button>
                   {quickView.shopee_link && (
                     <a
                       href={quickView.shopee_link}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-1 chill-btn bg-foreground text-background hover:bg-foreground/90 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold transition-all"
-                      onClick={(e) => e.stopPropagation()}
-                      title="Buy on Shopee"
+                      className="flex-1 chill-btn bg-muted text-foreground py-4 rounded-2xl font-bold hover:bg-muted/80 flex items-center justify-center gap-2"
                     >
-                      <ExternalLink className="w-5 h-5" />
-                      Buy on Shopee
+                      <ExternalLink className="w-4 h-4" />
+                      Mua trên Shopee
                     </a>
                   )}
-                  <button
-                    onClick={(e) => e.stopPropagation()}
-                    disabled={getProductStatus(quickView) === "out-of-stock"}
-                    className="flex-1 chill-btn bg-primary text-primary-foreground hover:bg-primary/95 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    {getProductStatus(quickView) === "out-of-stock"
-                      ? "Out of Stock"
-                      : "Add to Cart"}
-                  </button>
-                  <button
-                    onClick={() => toggleFavorite(quickView.id)}
-                    className={`w-12 h-12 rounded-xl border flex items-center justify-center transition-all ${isFavorite(quickView.id)
-                      ? "bg-rose-50 border-rose-200 text-rose-500"
-                      : "bg-muted/50 border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
-                      }`}
-                  >
-                    <Heart
-                      className={`w-5 h-5 ${isFavorite(quickView.id) ? "fill-rose-500" : ""
-                        }`}
-                    />
-                  </button>
                 </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
       {/* ════════════════════════════════════════════════════ */}
       {/* FOOTER                                               */}
       {/* ════════════════════════════════════════════════════ */}
-      <footer className="bg-[#0f1117] text-white/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-            {/* Brand */}
+      <footer className="bg-[#0f1117] text-white/40 pt-20 pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                  <ShoppingBag className="w-4 h-4 text-primary-foreground" />
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="text-base font-bold text-white">
-                  Tsubame's Sticker Shop
-                </span>
+                <span className="text-lg font-black text-white tracking-tight">Tsubamearts</span>
               </div>
-              <p className="text-sm leading-relaxed text-white/40 mb-4">
-                🔋✨ Let me recharge you with cute little things ✨🔋
-              </p>
-              <div className="flex gap-3">
-                {[
-                  { Icon: Instagram, href: "https://www.instagram.com/tsubame.arts/?hl=en" },
-                  { Icon: Facebook, href: "https://www.facebook.com/profile.php?id=61562372116408" },
-                ].map(({ Icon, href }, i) => (
-                  <a
-                    key={i}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
+              <p className="text-sm leading-relaxed mb-8">Để tớ nạp năng lượng cho cậu bằng những thứ nhỏ bé đáng yêu này nhé 😊🐥</p>
+              <div className="flex gap-4">
+                <a href="https://www.instagram.com/tsubame.arts/?hl=en" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61562372116408" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-all">
+                  <Facebook className="w-5 h-5" />
+                </a>
               </div>
             </div>
 
-            {/* Links */}
             <div>
-              <h4 className="text-xs font-bold text-white/80 uppercase tracking-wider mb-4">
-                Quick Links
-              </h4>
-              <ul className="space-y-2.5">
-                {["Products", "About", "Contact"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href={`#${item.toLowerCase()}`}
-                      className="text-sm text-white/50 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
+              <h4 className="font-bold text-white mb-6 text-sm uppercase tracking-widest">Khám phá</h4>
+              <ul className="space-y-4">
+                {["Sản phẩm", "Giới thiệu", "Liên hệ"].map(link => (
+                  <li key={link}>
+                    <a href={`#${link}`} className="text-sm hover:text-primary transition-colors">{link}</a>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Categories */}
             <div>
-              <h4 className="text-xs font-bold text-white/80 uppercase tracking-wider mb-4">
-                Categories
-              </h4>
-              <ul className="space-y-2.5">
-                {["Sticker", "Charm", "Packaging", "Clay", "Print"].map(
-                  (item) => (
-                    <li key={item}>
-                      <button
-                        onClick={() => {
-                          setCategory(item);
-                          document
-                            .getElementById("products")
-                            ?.scrollIntoView({ behavior: "smooth" });
-                        }}
-                        className="text-sm text-white/50 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </button>
-                    </li>
-                  )
-                )}
+              <h4 className="font-bold text-white mb-6 text-sm uppercase tracking-widest">Danh mục</h4>
+              <ul className="space-y-4">
+                {categories.slice(1, 4).map(cat => (
+                  <li key={cat}>
+                    <button onClick={() => setCategory(cat)} className="text-sm hover:text-primary transition-colors">{cat}</button>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Contact */}
             <div>
-              <h4 className="text-xs font-bold text-white/80 uppercase tracking-wider mb-4">
-                Get in Touch
-              </h4>
-              <ul className="space-y-2.5">
-                {[
-                  { icon: Mail, text: "info@tsubame-arts.com" },
-                  { icon: Phone, text: "+84 123 456 789" },
-                  { icon: MapPin, text: "Ho Chi Minh, Vietnam" },
-                ].map((item) => (
-                  <li
-                    key={item.text}
-                    className="flex items-center gap-2 text-sm text-white/50"
-                  >
-                    <item.icon className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-                    {item.text}
-                  </li>
-                ))}
+              <h4 className="font-bold text-white mb-6 text-sm uppercase tracking-widest">Liên hệ</h4>
+              <ul className="space-y-4 text-sm">
+                <li className="flex items-center gap-3"><Mail className="w-4 h-4" /> tsubame.arts@gmail.com</li>
+                <li className="flex items-center gap-3"><MapPin className="w-4 h-4" /> Ho Chi Minh City</li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-white/30">
-              © {new Date().getFullYear()} Tsubame Store. All rights reserved.
-            </p>
-            <p className="text-xs text-white/30">
-              Made with ❤️ and fox magic in Vietnam
-            </p>
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-[13px]">
+            <p>© {new Date().getFullYear()} Tsubame's Sticker Shop. Crafted with 💖 by Tsubame.arts</p>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>
@@ -1421,16 +1152,16 @@ export default function Landing() {
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="fixed bottom-6 right-6 z-40 w-10 h-10 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:opacity-90 transition-opacity"
+            className="fixed bottom-8 right-8 z-40 w-12 h-12 bg-primary text-primary-foreground rounded-2xl shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
           >
-            <ChevronUp className="w-5 h-5" />
+            <ChevronUp className="w-6 h-6" />
           </motion.button>
         )}
       </AnimatePresence>
-    </div >
+    </div>
   );
 }
