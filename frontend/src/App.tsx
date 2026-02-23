@@ -55,9 +55,9 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             {booting ? (
-              <Route path="/admin" element={<div className="p-6 text-sm text-muted-foreground">Loading…</div>} />
+              <Route path="/admin/*" element={<div className="p-6 text-sm text-muted-foreground">Loading…</div>} />
             ) : !role ? (
-              <Route path="/admin" element={<Navigate to="/login" replace />} />
+              <Route path="/admin/*" element={<Navigate to="/login" replace />} />
             ) : (
               <Route path="/admin" element={<AppLayout onLogout={handleLogout} role={role} />}>
                 <Route path="/admin" element={<Navigate to="/admin/revenue" replace />} />

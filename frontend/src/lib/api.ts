@@ -77,8 +77,10 @@ export interface Material {
   id: number;
   name: string;
   unit: string;
-  stock: number;
-  cost_per_unit: number;
+  quantity: number;
+  min_stock_level: number;
+  status: string;
+  price: number;
 }
 export interface DistributorPayload {
   name: string;
@@ -136,15 +138,55 @@ export const productsAPI = {
     return response.data;
   },
   
-  create: async (payload: Partial<Product>) => {
-    const response = await api.post('/products/', payload);
+  create: async (payload: Partial<Product> & { cost?: number }) => {
+    const body = {
+      name: payload.name ?? "",
+      description: payload.description ?? "",
+      category: payload.category ?? "",
+      price: Number(payload.price ?? 0),
+      cost: Number(payload.cost ?? payload.price ?? 0),
+      image: payload.image ?? "",
+      shopee_link: payload.shopee_link ?? undefined,
+    };
+    const response = await api.post('/products/', body);
+    return response.data;
+  },
+
+  update: async (id: number, payload: Partial<Product>) => {
+    const body = {
+      name: payload.name,
+      description: payload.description,
+      category: payload.category,
+      price: payload.price !== undefined ? Number(payload.price) : undefined,
+      cost: (payload as any).cost !== undefined ? Number((payload as any).cost) : undefined,
+      image: payload.image,
+      shopee_link: payload.shopee_link,
+    };
+    const response = await api.put(`/products/${id}`, body);
     return response.data;
   },
 };
 
 export const materialsAPI = {
+  getAll: async (): Promise<Material[]> => {
+    try {
+      const response = await api.get('/materials/');
+      const data = response.data;
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  },
   create: async (payload: Partial<Material>) => {
-    const response = await api.post('/materials/', payload);
+    const body = {
+      name: payload.name ?? "",
+      unit: payload.unit ?? "",
+      quantity: Number(payload.quantity ?? 0),
+      min_stock_level: Number(payload.min_stock_level ?? 0),
+      status: payload.status ?? "active",
+      price: Number(payload.price ?? 0),
+    };
+    const response = await api.post('/materials/', body);
     return response.data;
   },
 };

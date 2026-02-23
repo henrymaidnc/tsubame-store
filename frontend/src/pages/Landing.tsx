@@ -91,13 +91,6 @@ const statusConfig: Record<
 };
 
 
-const priceRanges = [
-  { label: "All Prices", min: 0, max: Infinity },
-  { label: "Under 35,000đ", min: 0, max: 35000 },
-  { label: "35k – 50kđ", min: 35000, max: 50000 },
-  { label: "50,000đ+", min: 50000, max: Infinity },
-];
-
 /* ─── Helpers ───────────────────────────────────────────── */
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -226,7 +219,6 @@ function FeatureCard({
 export default function Landing() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-  const [priceRange, setPriceRange] = useState(0);
   const [availableOnly, setAvailableOnly] = useState(false);
   const [quickView, setQuickView] = useState<Product | null>(null);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -294,21 +286,18 @@ export default function Landing() {
     };
   }, []);
 
-  const range = priceRanges[priceRange];
   const filtered = products.filter((p) => {
     const matchSearch =
       (p.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
       (p.description ?? "").toLowerCase().includes(search.toLowerCase());
     const matchCat = category === "All" || p.category === category;
     // Price logic
-    const matchPrice = p.price >= range.min && p.price <= range.max;
     const matchAvail = !availableOnly || getProductStatus(p) !== "out-of-stock";
-    return matchSearch && matchCat && matchPrice && matchAvail;
+    return matchSearch && matchCat && matchAvail;
   });
 
   const activeFilterCount =
     (category !== "All" ? 1 : 0) +
-    (priceRange !== 0 ? 1 : 0) +
     (availableOnly ? 1 : 0);
 
   const toggleFavorite = (id: number) =>
@@ -513,7 +502,7 @@ export default function Landing() {
       {/* ════════════════════════════════════════════════════ */}
       {/* HERO                                                 */}
       {/* ════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden h-[140px] sm:h-[280px] md:h-[320px] lg:h-[360px] xl:h-[460px]">
+      <section className="relative overflow-hidden h-[220px] sm:h-[280px] md:h-[320px] lg:h-[360px] xl:h-[530px]">
         {/* Floating fox decorations */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
           <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#c7ecf1_0%,white_85%)]" />
@@ -871,7 +860,7 @@ export default function Landing() {
                     </div>
 
                     {/* Price Range */}
-                    <div>
+                    {/* <div>
                       <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
                         Price Range
                       </h4>
@@ -889,7 +878,7 @@ export default function Landing() {
                           </button>
                         ))}
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Availability toggle */}
                     <label className="inline-flex items-center gap-2.5 cursor-pointer select-none group">
@@ -913,7 +902,6 @@ export default function Landing() {
                       <button
                         onClick={() => {
                           setCategory("All");
-                          setPriceRange(0);
                           setAvailableOnly(false);
                         }}
                         className="text-xs font-medium text-primary hover:underline"
@@ -1035,7 +1023,20 @@ export default function Landing() {
                               {product.category}
                             </p>
                             <h3 className="text-sm font-semibold text-foreground mb-3 line-clamp-2 leading-snug min-h-[2.5rem]">
-                              {product.name}
+                              {product.shopee_link ? (
+                                <a
+                                  href={product.shopee_link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="hover:underline"
+                                  title="Open on Shopee"
+                                >
+                                  {product.name}
+                                </a>
+                              ) : (
+                                product.name
+                              )}
                             </h3>
                             <div className="flex items-center justify-between gap-2">
                               {/* <span className="text-base font-bold text-foreground">
@@ -1096,7 +1097,20 @@ export default function Landing() {
                                 {product.category}
                               </p>
                               <h3 className="text-base font-semibold text-foreground mb-1 truncate">
-                                {product.name}
+                                {product.shopee_link ? (
+                                  <a
+                                    href={product.shopee_link}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="hover:underline"
+                                    title="Open on Shopee"
+                                  >
+                                    {product.name}
+                                  </a>
+                                ) : (
+                                  product.name
+                                )}
                               </h3>
                               <p className="text-sm text-muted-foreground line-clamp-1 hidden sm:block">
                                 {product.description}
@@ -1116,10 +1130,6 @@ export default function Landing() {
                           </div>
                           <div className="flex items-center justify-between mt-3 gap-3">
                             <div className="flex items-center gap-2.5">
-                              <span className="text-lg font-bold text-foreground">
-                                <span className="text-primary mr-1">đ</span>
-                                {product.price.toLocaleString()}đ
-                              </span>
                               <span
                                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${badge}`}
                               >
@@ -1150,7 +1160,7 @@ export default function Landing() {
                           </div>
                         </div>
                       </div>
-                    </motion.div>
+                      </motion.div>
                   );
                 })}
               </AnimatePresence>
@@ -1265,13 +1275,13 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="text-2xl font-bold text-foreground">
+                {/* <div className="text-2xl font-bold text-foreground">
                   <span className="text-primary mr-1">đ</span>
                   {quickView.price.toLocaleString()}
                   <span className="text-base font-medium text-muted-foreground ml-1">
                     đ
                   </span>
-                </div>
+                </div> */}
 
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-3">

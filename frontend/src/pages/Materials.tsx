@@ -1,21 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Plus } from "lucide-react";
-import { materialsAPI } from "@/lib/api";
+import { materialsAPI, type Material } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 interface MaterialForm {
   name: string;
   unit: string;
-  stock: string;
-  cost_per_unit: string;
+  quantity: string;
+  min_stock_level: string;
+  status: string;
+  price: string;
 }
 
 export default function Materials() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [form, setForm] = useState<MaterialForm>({ name: "", unit: "", stock: "", cost_per_unit: "" });
+  const [materials, setMaterials] = useState<Material[]>([]);
+  const [form, setForm] = useState<MaterialForm>({
+    name: "",
+    unit: "",
+    quantity: "",
+    min_stock_level: "",
+    status: "active",
+    price: "",
+  });
   const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  const loadMaterials = async () => {
+    try {
+      setBusy(true);
+      const data = await materialsAPI.getAll();
+      setMaterials(data);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const filtered = materials.filter((m) => {
+    const q = search.toLowerCase();
+    return (
+      m.name.toLowerCase().includes(q) ||
+      m.unit.toLowerCase().includes(q) ||
+      String(m.quantity).includes(q) ||
+      String(m.price).includes(q) ||
+      m.status.toLowerCase().includes(q)
+    );
+  });
+
+  useEffect(() => {
+    loadMaterials();
+  }, []);
+
+  const toMessage = (err: any): string => {
+    const detail = err?.response?.data?.detail;
+    if (!detail) return "Check API";
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) {
+      const msgs = detail.map((d: any) => d?.msg ?? JSON.stringify(d)).join("; ");
+      return msgs || "Validation error";
+    }
+    if (typeof detail === "object") {
+      return detail?.msg || JSON.stringify(detail);
+    }
+    return String(detail);
+  };
 
   const save = async () => {
     try {
@@ -23,14 +73,17 @@ export default function Materials() {
       await materialsAPI.create({
         name: form.name,
         unit: form.unit,
-        stock: Number(form.stock || 0),
-        cost_per_unit: Number(form.cost_per_unit || 0),
+        quantity: Number(form.quantity || 0),
+        min_stock_level: Number(form.min_stock_level || 0),
+        status: form.status || "active",
+        price: Number(form.price || 0),
       });
       toast({ title: "Material added" });
       setOpen(false);
-      setForm({ name: "", unit: "", stock: "", cost_per_unit: "" });
+      setForm({ name: "", unit: "", quantity: "", min_stock_level: "", status: "active", price: "" });
+      await loadMaterials();
     } catch (e: any) {
-      toast({ title: "Failed to add material", description: e?.response?.data?.detail || "Check API" });
+      toast({ title: "Failed to add material", description: toMessage(e) });
     } finally {
       setLoading(false);
     }
@@ -59,7 +112,38 @@ export default function Materials() {
             className="w-full rounded-lg border border-border bg-muted pl-9 pr-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none transition-colors"
           />
         </div>
-        <div className="py-10 text-center text-muted-foreground text-sm">No materials listed. Use “Add Material”.</div>
+        {busy ? (
+          <div className="py-10 text-center text-muted-foreground text-sm">Loading materials…</div>
+        ) : filtered.length === 0 ? (
+          <div className="py-10 text-center text-muted-foreground text-sm">No materials listed. Use “Add Material”.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-muted-foreground">
+                  <th className="py-2 px-3">Name</th>
+                  <th className="py-2 px-3">Unit</th>
+                  <th className="py-2 px-3">Qty</th>
+                  <th className="py-2 px-3">Min</th>
+                  <th className="py-2 px-3">Status</th>
+                  <th className="py-2 px-3">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((m) => (
+                  <tr key={m.id} className="border-t border-border">
+                    <td className="py-2 px-3 text-foreground">{m.name}</td>
+                    <td className="py-2 px-3">{m.unit}</td>
+                    <td className="py-2 px-3">{m.quantity}</td>
+                    <td className="py-2 px-3">{m.min_stock_level}</td>
+                    <td className="py-2 px-3">{m.status}</td>
+                    <td className="py-2 px-3">{m.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {open && (
@@ -70,9 +154,13 @@ export default function Materials() {
               <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
               <div className="grid grid-cols-2 gap-3">
                 <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Unit (e.g., pcs)" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
-                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Stock" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} />
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Quantity" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
               </div>
-              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Cost per unit" value={form.cost_per_unit} onChange={(e) => setForm({ ...form, cost_per_unit: e.target.value })} />
+              <div className="grid grid-cols-2 gap-3">
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Min Stock Level" value={form.min_stock_level} onChange={(e) => setForm({ ...form, min_stock_level: e.target.value })} />
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Status (e.g., active)" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} />
+              </div>
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
             </div>
             <div className="p-5 border-t border-border flex gap-2 justify-end">
               <button onClick={() => setOpen(false)} className="rounded-lg border border-border bg-muted px-4 py-2 text-sm">Cancel</button>

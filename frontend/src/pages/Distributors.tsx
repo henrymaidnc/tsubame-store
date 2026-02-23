@@ -32,6 +32,20 @@ export default function Distributors() {
   const [form, setForm] = useState({ name: "", branch: "", commission: "", contact: "", phone: "" });
   const { toast } = useToast();
 
+  const toMessage = (err: any): string => {
+    const detail = err?.response?.data?.detail;
+    if (!detail) return "Check API";
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) {
+      const msgs = detail.map((d: any) => d?.msg ?? JSON.stringify(d)).join("; ");
+      return msgs || "Validation error";
+    }
+    if (typeof detail === "object") {
+      return detail?.msg || JSON.stringify(detail);
+    }
+    return String(detail);
+  };
+
   const save = async () => {
     try {
       setSaving(true);
@@ -46,7 +60,7 @@ export default function Distributors() {
       setOpen(false);
       setForm({ name: "", branch: "", commission: "", contact: "", phone: "" });
     } catch (e: any) {
-      toast({ title: "Failed to add distributor", description: e?.response?.data?.detail || "Check API" });
+      toast({ title: "Failed to add distributor", description: toMessage(e) });
     } finally {
       setSaving(false);
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, X, ShoppingCart, Info, Plus } from "lucide-react";
+import { Search, X, ShoppingCart, Info, Plus, Pencil } from "lucide-react";
 import { productsAPI } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
@@ -79,29 +79,81 @@ export default function Product() {
   const [addOpen, setAddOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newProduct, setNewProduct] = useState({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "", shopee_link: "" });
+  const [editOpen, setEditOpen] = useState(false);
+  const [editing, setEditing] = useState<CatalogProduct | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", category: "", price: "", image: "", description: "", shopee_link: "" });
+
+  const toMessage = (err: any): string => {
+    const detail = err?.response?.data?.detail;
+    if (!detail) return "Check API";
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) {
+      const msgs = detail.map((d: any) => d?.msg ?? JSON.stringify(d)).join("; ");
+      return msgs || "Validation error";
+    }
+    if (typeof detail === "object") {
+      return detail?.msg || JSON.stringify(detail);
+    }
+    return String(detail);
+  };
 
   const saveProduct = async () => {
     try {
       setSaving(true);
+      // Align payload with backend schema (name, description, category, price, cost, image, shopee_link)
       await productsAPI.create({
         name: newProduct.name,
         category: newProduct.category,
         price: Number(newProduct.price || 0),
-        stock: Number(newProduct.stock || 0),
-        distributor: newProduct.distributor,
+        cost: Number(newProduct.price || 0),
         image: newProduct.image,
         description: newProduct.description,
         shopee_link: newProduct.shopee_link || undefined,
-        status: "in-stock",
-        batch_number: "",
-      } as any);
+      });
       toast({ title: "Product added" });
       setAddOpen(false);
       setNewProduct({ name: "", category: "", price: "", stock: "", distributor: "", image: "", description: "", shopee_link: "" });
       const data = await productsAPI.getAll();
       setProducts(data);
     } catch (e: any) {
-      toast({ title: "Failed to add product", description: e?.response?.data?.detail || "Check API" });
+      toast({ title: "Failed to add product", description: toMessage(e) });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openEdit = (p: CatalogProduct) => {
+    setEditing(p);
+    setEditForm({
+      name: p.name || "",
+      category: p.category || "",
+      price: String(p.price ?? ""),
+      image: p.image || "",
+      description: p.description || "",
+      shopee_link: p.shopee_link || "",
+    });
+    setEditOpen(true);
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    try {
+      setSaving(true);
+      await productsAPI.update(editing.id, {
+        name: editForm.name,
+        category: editForm.category,
+        price: editForm.price ? Number(editForm.price) : undefined,
+        image: editForm.image,
+        description: editForm.description,
+        shopee_link: editForm.shopee_link || undefined,
+      });
+      toast({ title: "Product updated" });
+      setEditOpen(false);
+      setEditing(null);
+      const data = await productsAPI.getAll();
+      setProducts(data);
+    } catch (e: any) {
+      toast({ title: "Failed to update product", description: toMessage(e) });
     } finally {
       setSaving(false);
     }
@@ -170,9 +222,14 @@ export default function Product() {
                 <div className="relative aspect-square bg-muted overflow-hidden">
                   <img src={product.image} alt={product.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <span className={`absolute top-2 left-2 rounded-full px-2 py-0.5 text-xs font-medium ${className}`}>{label}</span>
-                  <button onClick={() => setQuickView(product)} className="absolute bottom-2 right-2 rounded-full bg-card/80 backdrop-blur-sm p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/20">
-                    <Info className="h-3.5 w-3.5 text-primary" />
-                  </button>
+                  <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => openEdit(product)} className="rounded-full bg-card/80 backdrop-blur-sm p-1.5 hover:bg-primary/20">
+                      <Pencil className="h-3.5 w-3.5 text-primary" />
+                    </button>
+                    <button onClick={() => setQuickView(product)} className="rounded-full bg-card/80 backdrop-blur-sm p-1.5 hover:bg-primary/20">
+                      <Info className="h-3.5 w-3.5 text-primary" />
+                    </button>
+                  </div>
                 </div>
                 <div className="p-3 flex flex-col flex-1 gap-2">
                   <div>
@@ -211,6 +268,28 @@ export default function Product() {
             <div className="p-5 border-t border-border flex gap-2 justify-end">
               <button onClick={() => setAddOpen(false)} className="rounded-lg border border-border bg-muted px-4 py-2 text-sm">Cancel</button>
               <button disabled={saving} onClick={saveProduct} className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm">{saving ? "Saving..." : "Save"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editOpen && editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setEditOpen(false)}>
+          <div className="bg-background rounded-xl w-full max-w-lg mx-4 border border-border" onClick={(e) => e.stopPropagation()}>
+            <div className="p-5 border-b border-border text-base font-semibold">Edit Product</div>
+            <div className="p-5 space-y-3">
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Name" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Category" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} />
+              <div className="grid grid-cols-2 gap-3">
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Price" value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} />
+                <input className="rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Image URL" value={editForm.image} onChange={(e) => setEditForm({ ...editForm, image: e.target.value })} />
+              </div>
+              <input className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" placeholder="Shopee Link (optional)" value={editForm.shopee_link} onChange={(e) => setEditForm({ ...editForm, shopee_link: e.target.value })} />
+              <textarea className="w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm" rows={3} placeholder="Description" value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} />
+            </div>
+            <div className="p-5 border-t border-border flex gap-2 justify-end">
+              <button onClick={() => setEditOpen(false)} className="rounded-lg border border-border bg-muted px-4 py-2 text-sm">Cancel</button>
+              <button disabled={saving} onClick={saveEdit} className="rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm">{saving ? "Saving..." : "Save"}</button>
             </div>
           </div>
         </div>
