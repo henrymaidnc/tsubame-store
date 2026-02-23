@@ -347,7 +347,7 @@ export default function Landing() {
                 <ShoppingBag className="w-[18px] h-[18px] text-primary-foreground" />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-foreground">
-                TSUBAME'S STICKER<span className="text-primary">SHOP ✨</span>
+                TSUBAME'S STICKER<span className="text-primary"> SHOP ✨</span>
               </span>
             </motion.div>
 
@@ -1353,11 +1353,11 @@ export default function Landing() {
                   <ShoppingBag className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <span className="text-base font-bold text-white">
-                  TsubameStore
+                  Tsubame's Sticker Shop
                 </span>
               </div>
               <p className="text-sm leading-relaxed text-white/40 mb-4">
-                Where magic meets craftsmanship in every fox-themed creation.
+                🔋✨ Let me recharge you with cute little things ✨🔋
               </p>
               <div className="flex gap-3">
                 {[
