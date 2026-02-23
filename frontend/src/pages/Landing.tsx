@@ -234,7 +234,7 @@ export default function Landing() {
   const [showThemePicker, setShowThemePicker] = useState(false);
 
   useEffect(() => {
-    const title = "Tsubame Arts";
+    const title = "TSUBAME'S STICKER SHOP ✨";
     const description =
       "🔋✨ Let me recharge you with cute little things ✨🔋";
     document.title = title;
@@ -347,7 +347,7 @@ export default function Landing() {
                 <ShoppingBag className="w-[18px] h-[18px] text-primary-foreground" />
               </div>
               <span className="text-lg font-extrabold tracking-tight text-foreground">
-                TsubameArt<span className="text-primary">Store</span>
+                TSUBAME'S STICKER<span className="text-primary">SHOP ✨</span>
               </span>
             </motion.div>
 
